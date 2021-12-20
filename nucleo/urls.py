@@ -18,7 +18,7 @@ from django.urls import path
 from nucleo import views
 
 urlpatterns = [
-    path('/', views.index,name="index"),
-    path('/users',views.users,name="users"),
-    path('/users/<int:user_id>',views.usersDetails,name="user")
+    path('', views.index,name="index"),
+    path('users',views.users,name="users"),
+    path('users/<int:user_id>',views.usersDetails,name="user")
 ]
