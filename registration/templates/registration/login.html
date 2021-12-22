@@ -1,0 +1,11 @@
+<form action="" method="POST"> {% csrf_token %}
+    <h3 class="mb-4">Iniciar Sesión</h3>
+    {% if form.non_field_errors %}
+    <p style="color:red"> Credenciales incorrectas, intente otra vez. </p>
+    {% endif %}
+    <p>
+        <input type="text" name="username" autofocus required id="id_username" class="form-control"/>
+    </p>
+    <input type="password" name="password" required id="id_password" class="form-control"/>
+    <p><input type="submit" class="btn btn-primary btn-block" value="Acceder"></p>
+</form>

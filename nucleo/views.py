@@ -4,8 +4,15 @@ from django.contrib.auth import authenticate,login
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
+from django.views.generic.base import TemplateView
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView,DeleteView,UpdateView
+
+from .forms import UserForm
 
 # Create your views here.
+
 def index(request):
     if request.method == "POST":
         username=request.POST.get('username')
@@ -21,10 +28,8 @@ def index(request):
         else:
             messages.error(request,"Username or password incorrect")
         
-    
-    return render(request,'index.html',{
-        
-    })
+    form=UserForm()
+    return render(request,'index.html',{"form":form})
     
 def users(request):
     users=User.objects.all()
@@ -37,3 +42,13 @@ def usersDetails(request,user_id):
         raise Http404('No existe')
     context={'user':user}
     return render(request,"userDetails.html",{'user':user})
+
+class HomePageView(TemplateView):
+    template_name="index.html"
+    
+class UsersView(ListView):
+    model=User
+    
+class UserDetails(DetailView):
+    model=User
+    

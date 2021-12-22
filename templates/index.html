@@ -47,8 +47,8 @@
                         {% csrf_token %}
                         <div class="row input-group-newsletter">
 
-                            <div class="row"><input class="form-control" name="username" id="username" type="text" placeholder="Enter username..." aria-label="Enter username..." data-sb-validations="required,email" /></div><p></p>
-                            <div class="row"><input class="form-control" name="password" id="password" type="password" placeholder="Enter password..." aria-label="Enter password..." data-sb-validations="required,password" /></div><p></p>
+                            <div class="row">{{form.username}}<p></p></div>
+                            <div class="row">{{form.password}}</div><p></p>
                             <div class="row"><button class="btn btn-primary" id="submitButton" type="submit">Login!</button></div>
                         </div>
                         <div class="d-none" id="submitSuccessMessage">
