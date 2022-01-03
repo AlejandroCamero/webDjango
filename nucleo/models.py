@@ -1,11 +1,13 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-class User(models.Model):
-    username = models.CharField(max_length=40, verbose_name="Nombre de Usuario")
-    password = models.CharField(max_length=255, verbose_name="Contraseña")
+class User(AbstractUser):
     
     def __str__(self):
         return self.username
+    
+    def get_full_name(self):
+        return '{} {}'.format(self.first_name,self.last_name)
     
 class Employee(models.Model):
     dni = models.CharField(max_length=9, verbose_name="DNI")
@@ -24,8 +26,8 @@ class Client(models.Model):
     surname = models.CharField(max_length=60, verbose_name="Apellidos")
     address = models.CharField(max_length=150, verbose_name="Dirección")
     birthDate = models.DateField(verbose_name="Fecha de nacimiento")
-    dischargeDate = models.DateField(verbose_name="Fecha de alta")
-    active = models.IntegerField(verbose_name="Activo")
+    dischargeDate = models.DateField(verbose_name="Fecha de alta",null=True)
+    active = models.IntegerField(verbose_name="Activo",default=0)
     idUser = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuario")
     
     def __str__(self):

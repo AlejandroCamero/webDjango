@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate,login
 from django.contrib import messages
 from django.shortcuts import redirect, render
-from django.contrib.auth.models import User
+from .models import User
 from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
@@ -51,4 +51,8 @@ class UsersView(ListView):
     
 class UserDetails(DetailView):
     model=User
+
+class UserDelete(DeleteView):
+    model=User
+    success_url="../usersView"
     

@@ -1,0 +1,14 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}
+<title>Register!</title>
+{% endblock title %}
+{% block head %}
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Register">
+</form>
+{% endblock head %}
+{% block other %}
+<br>
+{% endblock other %}

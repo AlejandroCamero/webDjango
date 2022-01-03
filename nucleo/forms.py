@@ -1,9 +1,12 @@
 from django import forms
 
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db.models.fields import TextField
 from django.forms.fields import CharField
 from django.forms.widgets import Textarea
+
+User = get_user_model()
 
 class UserForm(forms.ModelForm):
     class Meta:
