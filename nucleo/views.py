@@ -1,5 +1,4 @@
 from django.http.response import Http404
-from django.shortcuts import render
 from django.contrib.auth import authenticate,login
 from django.contrib import messages
 from django.shortcuts import redirect, render
@@ -45,6 +44,15 @@ def usersDetails(request,user_id):
 
 class HomePageView(TemplateView):
     template_name="index.html"
+
+class AboutView(TemplateView):
+    template_name="plantilla/about.html"
+    
+class SamplePostView(TemplateView):
+    template_name="plantilla/post.html"
+
+class ContactView(TemplateView):
+    template_name="plantilla/contact.html"
     
 class UsersView(ListView):
     model=User

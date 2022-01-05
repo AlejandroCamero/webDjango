@@ -1,11 +1,37 @@
-<form action="" method="POST"> {% csrf_token %}
-    <h3 class="mb-4">Iniciar Sesión</h3>
-    {% if form.non_field_errors %}
-    <p style="color:red"> Credenciales incorrectas, intente otra vez. </p>
+{% extends "base.html" %}
+{% block title%}Login{% endblock %}
+{% block content %}
+<main>
+    {% if 'register' in request.GET %}
+    <div class="container my-3 col-6 justify-content-center">
+        <div class="alert alert-success">
+            Usuario registrado con éxito.
+        </div>
+    </div>
     {% endif %}
-    <p>
-        <input type="text" name="username" autofocus required id="id_username" class="form-control"/>
-    </p>
-    <input type="password" name="password" required id="id_password" class="form-control"/>
-    <p><input type="submit" class="btn btn-primary btn-block" value="Acceder"></p>
-</form>
+    <div class="container my-4">
+        <div class="card w-50 mx-auto p-3">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="card-title">
+                    <h3 class="mb-4">Iniciar Sesión</h3>
+                </div>
+                <div class="card-body">
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        Credenciales incorrectas, intente de nuevo.
+                    </div>
+                    {% endif %}
+                    <p>
+                        <input type="text" name="username" autofocus required id="id_username" class="form-control"/>
+                    </p>
+                    <p>
+                        <input type="password" name="password" required id="id_password" class="form-control"/>
+                    </p>
+                    <p><input type="submit" class="btn btn-primary btn-block" value="Acceder"></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

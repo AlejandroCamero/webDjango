@@ -11036,7 +11036,7 @@ blockquote {
 }
 
 #mainNav {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   right: 0;
@@ -11063,7 +11063,7 @@ blockquote {
 @media (min-width: 992px) {
   #mainNav {
     border-bottom: 1px solid transparent;
-    background: transparent;
+    background: #495057;
   }
   #mainNav .navbar-brand {
     color: #fff;
@@ -11076,6 +11076,12 @@ blockquote {
   }
   #mainNav .navbar-nav > li.nav-item > a.nav-link:focus, #mainNav .navbar-nav > li.nav-item > a.nav-link:hover {
     color: rgba(255, 255, 255, 0.8);
+  }
+  #mainNav .navbar-nav > li.nav-item > div.dropdown > button.btn-default {
+    color: #939BA3;
+  }
+  #mainNav .navbar-nav > li.nav-item > div.dropdown > button.btn-default:hover {
+    color: #7a8189;
   }
 }
 @media (min-width: 992px) {
