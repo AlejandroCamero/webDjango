@@ -1,6 +1,9 @@
 from django.db import models
 import datetime
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.signals import user_logged_out
+from django.dispatch import receiver
+from django.contrib import messages
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -10,6 +13,11 @@ class User(AbstractUser):
     
     def getFullName(self):
         return '{} {}'.format(self.first_name, self.last_name)
+    
+    @receiver(user_logged_out)
+    def on_user_logged_out(sender, request, **kwargs):
+        user = request.user.username
+        messages.add_message(request, messages.INFO, 'El usuario {} ha salido del sistema'.format(user))
     
 class Employee(models.Model):
     dni = models.CharField(max_length=9, verbose_name="DNI")

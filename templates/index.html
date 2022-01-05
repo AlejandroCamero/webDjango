@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Home{% endblock %}
+{% block messages %}
+    {% if messages %}
+    <div class="container">
+        {% for message in messages %}
+            <div class="alert alert-warning mt-3">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endblock %}
 {% block content %}
         <header class="masthead" style="background-image: url('{% static 'assets/img/home-bg.jpg' %}">
             <div class="container position-relative px-4 px-lg-5">
