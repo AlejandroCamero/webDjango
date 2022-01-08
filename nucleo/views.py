@@ -29,18 +29,6 @@ def index(request):
         
     form=UserForm()
     return render(request,'index.html',{"form":form})
-    
-def users(request):
-    users=User.objects.all()
-    return render(request,"users.html",{'users':users})
-
-def usersDetails(request,user_id):
-    try:
-        user=User.objects.get(pk=user_id)
-    except:
-        raise Http404('No existe')
-    context={'user':user}
-    return render(request,"userDetails.html",{'user':user})
 
 class HomePageView(TemplateView):
     template_name="index.html"
@@ -53,10 +41,4 @@ class SamplePostView(TemplateView):
 
 class ContactView(TemplateView):
     template_name="plantilla/contact.html"
-    
-class UsersView(ListView):
-    model=User
-    
-class UserDetails(DetailView):
-    model=User
     

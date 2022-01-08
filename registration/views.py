@@ -1,13 +1,25 @@
-from django import forms
-from django.http.response import HttpResponse, HttpResponseRedirect
+from django.http.response import  HttpResponseRedirect
 from django.urls.base import reverse_lazy
 from django.views.generic.edit import CreateView,DeleteView,UpdateView
+from django.views.generic.detail import DetailView
 from nucleo.models import User, Client
-import datetime
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+
 
 from registration.forms import UserCreationFormWithEmail, ClientForm
-
+from registration.decorators import same_user
 # Create your views here.
+
+@method_decorator(same_user, name='dispatch')
+class ClientDetailsView(DetailView):
+    model = User
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args,**kwargs)
+        context['client'] = Client.objects.get(idUser=self.request.user)
+        return context
+    
 
 class ClientCreate(CreateView):
     form_class = ClientForm
@@ -36,23 +48,3 @@ class ClientCreate(CreateView):
             return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response(self.get_context_data(form=form, form2=form2))
-    
-    # def get_context_data(self, **kwargs):
-    #     # we need to overwrite get_context_data
-    #     # to make sure that our formset is rendered
-    #     data = super(ClientCreate, self).get_context_data(**kwargs)
-    #     if self.request.POST:
-    #         data["user"] = UserCreationFormWithEmail(self.request.POST)
-    #     else:
-    #         data["user"] = UserCreationFormWithEmail()
-    #     return data
-    
-    # def form_valid(self, form):
-    #     context = self.get_context_data()
-    #     user = context["user"]
-    #     self.object = form.save()
-    #     if user.is_valid():
-    #         user.instance = self.object
-    #         user.save()
-    #     return super().form_valid(form)
-    
