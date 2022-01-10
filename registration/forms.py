@@ -8,7 +8,7 @@ User = get_user_model()
 class UserForm(forms.ModelForm):
     class Meta:
         model=User
-        fields=['username','email','first_name','last_name','password']
+        fields=['username','email','password']
         widgets={
             'username':forms.TextInput(attrs={'class':'form-control','placeholder':'Enter username...','label':'Username'}),
             'email':forms.TextInput(attrs={'class':'form-control','placeholder':'Enter email...','label':'Username'}),

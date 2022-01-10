@@ -13,12 +13,11 @@ User = get_user_model()
 
 def register(request):
     form=ClientForm(request.POST or None)
-    
+    userform=UserForm(request.POST or None)
     if request.method=='POST' and form.is_valid():
-        dni=form.cleaned_data.get('dni')
         
         cliente = form.save()
-        user = User.objects.create_user(dni,"","hola")
+        user = userform.save()
                 
         if user:
             login(request,user)
@@ -26,5 +25,6 @@ def register(request):
             return redirect('/')
         
     return render(request,'nucleo/user_form.html',{
-        'form':form
+        'form':form,
+        'form2':userform
     })

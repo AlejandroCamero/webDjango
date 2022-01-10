@@ -5,8 +5,17 @@
 {% endblock title %}
 {% block head %}
 <form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Register">
+<div class="container">
+    <div class="row">
+        <div class="col">
+            {{ form.as_p }}
+        </div> 
+        <div class="col">
+            {{ form2.as_p }}
+        </div> 
+        <input type="submit" class="btn btn-primary btn-block" value="Register">
+    </div>
+</div>
 </form>
 {% endblock head %}
 {% block other %}
