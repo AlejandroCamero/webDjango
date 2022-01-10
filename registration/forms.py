@@ -13,7 +13,7 @@ class ClientForm(forms.ModelForm):
             'name' : forms.TextInput(attrs={'class' : 'form-control mb2', 'placeholder' : 'Nombre'}),
             'surname' : forms.TextInput(attrs={'class' : 'form-control mb2', 'placeholder' : 'Apellidos'}),
             'address' : forms.TextInput(attrs={'class' : 'form-control mb2', 'placeholder' : 'Dirección'}),
-            'birthDate' : forms.DateInput(attrs={'class' : 'form-control mb2', 'type' : 'date', 'placeholder' : 'Fecha de nacimiento'}),
+            'birthDate' : forms.DateInput(format=('%Y-%m-%d'), attrs={'class' : 'form-control mb2', 'type' : 'date', 'placeholder' : 'Fecha de nacimiento'}),
         }
         
 

@@ -4,11 +4,10 @@ from django.views.generic.edit import CreateView,DeleteView,UpdateView
 from django.views.generic.detail import DetailView
 from nucleo.models import User, Client
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
 
 
 from registration.forms import UserCreationFormWithEmail, ClientForm
-from registration.decorators import same_user
+from registration.decorators import same_user, same_client
 # Create your views here.
 
 @method_decorator(same_user, name='dispatch')
@@ -48,7 +47,8 @@ class ClientCreate(CreateView):
             return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response(self.get_context_data(form=form, form2=form2))
-        
+
+@method_decorator(same_client, name='dispatch')       
 class ClientUpdate(UpdateView):
     model = Client
     form_class = ClientForm
@@ -62,7 +62,8 @@ class ClientUpdate(UpdateView):
         if 'form' not in context:
             context['form'] = self.form_class(self.request.GET)
         return context
-    
+
+@method_decorator(same_user, name='dispatch')
 class UserUpdate(UpdateView):
     model = User
     form_class = UserCreationFormWithEmail
