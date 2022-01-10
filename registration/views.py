@@ -52,7 +52,7 @@ class ClientCreate(CreateView):
 class ClientUpdate(UpdateView):
     model = Client
     form_class = ClientForm
-    template_name = 'registration/register.html'
+    template_name = 'auth/client_update.html'
     
     def get_success_url(self):
         return reverse_lazy('index')
@@ -67,7 +67,7 @@ class ClientUpdate(UpdateView):
 class UserUpdate(UpdateView):
     model = User
     form_class = UserCreationFormWithEmail
-    template_name = 'registration/register.html'
+    template_name = 'auth/user_update.html'
     
     def get_success_url(self):
         return reverse_lazy('index')

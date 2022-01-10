@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title%}Actualizar cliente{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="card w-50 mx-auto p-3">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="card-title">
+                <h3 class="mb-4">Actualizar datos de clientes</h3>
+            </div>
+            {{form.as_p}}
+            <p>
+                <input type="submit" class="btn btn-primary" value="Confirmar"/>
+            </p>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
