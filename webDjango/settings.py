@@ -102,6 +102,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# User Model
+AUTH_USER_MODEL = 'nucleo.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -125,7 +127,9 @@ STATICFILES_DIRS=(
     os.path.join(BASE_DIR,'static'),
 )
 
-LOGIN_REDIRECT_URL='/nucleo/'
+REGISTER_REDIRECT_URL="/"
+
+LOGIN_REDIRECT_URL= '/'
 
 LOGOUT_REDIRECT_URL='/nucleo/'
 

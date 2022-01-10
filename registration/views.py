@@ -48,3 +48,33 @@ class ClientCreate(CreateView):
             return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response(self.get_context_data(form=form, form2=form2))
+        
+class ClientUpdate(UpdateView):
+    model = Client
+    form_class = ClientForm
+    template_name = 'registration/register.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('index')
+    
+    def get_context_data(self, **kwargs):
+        context = super(ClientUpdate, self).get_context_data(**kwargs)
+        if 'form' not in context:
+            context['form'] = self.form_class(self.request.GET)
+        return context
+    
+class UserUpdate(UpdateView):
+    model = User
+    form_class = UserCreationFormWithEmail
+    template_name = 'registration/register.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('index')
+    
+    def get_context_data(self, **kwargs):
+        context = super(UserUpdate, self).get_context_data(**kwargs)
+        if 'form' not in context:
+            context['form'] = self.form_class(self.request.GET)
+        return context
+    
+    

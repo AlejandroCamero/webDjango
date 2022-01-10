@@ -50,7 +50,9 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button class="btn btn-primary my-3" value="update">Modificar DatosAAAAAAAAAAAa</button>
+                <a class="btn btn-primary my-3" href="{% url 'update' client.pk %}"> Modificar Datos Cliente</a>
+                <a class="btn btn-primary my-3" href="{% url 'updateUser' request.user.pk %}"> Modificar Datos Usuario</a>
+                
             </div>
         </div>
     </div>
