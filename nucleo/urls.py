@@ -19,10 +19,8 @@ from nucleo import views
 
 urlpatterns = [
     path('homePage', views.HomePageView.as_view(),name="homePage"),
+    path('about', views.AboutView.as_view(),name="about"),
+    path('samplePost', views.SamplePostView.as_view(),name="samplePost"),
+    path('contact', views.ContactView.as_view(),name="contact"),
     path('', views.index,name="index"),
-    path('users',views.users,name="users"),
-    path('usersView',views.UsersView.as_view(),name="usersView"),
-    path('users/<int:user_id>',views.usersDetails,name="user"),
-    path('usersDetail/<pk>',views.UserDetails.as_view(),name="userDetails"),
-    path('usersDelete/<pk>',views.UserDelete.as_view(),name="userDelete"),
 ]

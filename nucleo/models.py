@@ -1,13 +1,23 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+import datetime
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.signals import user_logged_out
+from django.dispatch import receiver
+from django.contrib import messages
 
 class User(AbstractUser):
+    email = models.EmailField(unique=True)
     
     def __str__(self):
         return self.username
     
-    def get_full_name(self):
-        return '{} {}'.format(self.first_name,self.last_name)
+    def getFullName(self):
+        return '{} {}'.format(self.first_name, self.last_name)
+    
+    @receiver(user_logged_out)
+    def on_user_logged_out(sender, request, **kwargs):
+        user = request.user.username
+        messages.add_message(request, messages.INFO, 'El usuario {} ha salido del sistema'.format(user))
     
 class Employee(models.Model):
     dni = models.CharField(max_length=9, verbose_name="DNI")
@@ -26,8 +36,8 @@ class Client(models.Model):
     surname = models.CharField(max_length=60, verbose_name="Apellidos")
     address = models.CharField(max_length=150, verbose_name="Dirección")
     birthDate = models.DateField(verbose_name="Fecha de nacimiento")
-    dischargeDate = models.DateField(verbose_name="Fecha de alta",null=True)
-    active = models.IntegerField(verbose_name="Activo",default=0)
+    dischargeDate = models.DateField(verbose_name="Fecha de alta", default = datetime.date.today())
+    active = models.IntegerField(verbose_name="Activo", default=1)
     idUser = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuario")
     
     def __str__(self):

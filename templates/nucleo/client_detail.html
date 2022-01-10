@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title%}Detalles{% endblock %}
+{% block content %}
+
+    <div class="container my-5">
+        <div class="card border-dark w-50 mx-auto p-3">
+            <div class="card-header">
+                <h3 class="mb-4">Detalles de cliente</h3>
+            </div>
+            <div class="card-body text-dark">
+                <div class="card-text">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item row">
+                            <div class="row"> 
+                                <div class="col-lg-6">Nombre de usuario:</div>
+                                <div class="col-lg-6">{{object.username}}</div>
+                            </div>
+                        </li>
+                        <li class="list-group-item row">
+                            <div class="row"> 
+                                <div class="col-lg-6">Nombre:</div>
+                                <div class="col-lg-6">{{client.name}}</div>
+                            </div>
+                        </li>
+                        <li class="list-group-item row">
+                            <div class="row"> 
+                                <div class="col-lg-6">Apellidos:</div>
+                                <div class="col-lg-6">{{client.surname}}</div>
+                            </div>
+                        </li>
+                        <li class="list-group-item row">
+                            <div class="row"> 
+                                <div class="col-lg-6">DNI:</div>
+                                <div class="col-lg-6">{{client.dni}}</div>
+                            </div>
+                        </li>
+                        <li class="list-group-item row">
+                            <div class="row"> 
+                                <div class="col-lg-6">Dirección:</div>
+                                <div class="col-lg-6">{{client.address}}</div>
+                            </div>
+                        </li>
+                        <li class="list-group-item row">
+                            <div class="row"> 
+                                <div class="col-lg-6">Fecha de nacimiento:</div>
+                                <div class="col-lg-6">{{client.birthDate}}</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary my-3" value="update">Modificar Datos</button>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
