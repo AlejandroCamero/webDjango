@@ -15,19 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from django.urls.conf import include
 from . import views
-from django.conf import settings
-from django.conf.urls.static import static
-
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('administrador/', include('administrador.urls')),
-    path("nucleo/",include('nucleo.urls')),
-    path("accounts/",include('django.contrib.auth.urls')),
-    path("accounts/",include('registration.urls')),
-    path('',views.index,name="/"),
-]+static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
-urlpatterns+=static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
-
+    # path('employees', views.ListView.as_view(),name="employees"),
+    path('clients', views.ClientList.as_view(),name="clients"),
+    path('clientDelete/<int:pk>', views.ClientDelete.as_view(),name="clientDelete"),
+    path('clientActivate/<int:pk>', views.ClientActivate,name="clientActivate"),
+    path('clientDesactivate/<int:pk>', views.ClientDesactivate,name="clientDesactivate"),
+    path('clientCreate', views.ClientCreate.as_view(),name="clientCreate"),
+    
+    path('employees', views.EmployeeList.as_view(),name="employees"),
+    path('employeeDelete/<int:pk>', views.EmployeeDelete.as_view(),name="employeeDelete"),
+    path('employeeCreate', views.EmployeeCreate.as_view(),name="employeeCreate"),
+]

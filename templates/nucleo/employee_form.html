@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}
+Create Client
+{% endblock title %}
+{% block content %}
+<form method="post">{% csrf_token %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            {{ form.as_p }}
+        </div> 
+        <input type="submit" class="btn btn-primary btn-block" value="Confirmar">
+    </div>
+</div>
+</form>
+{% endblock content %}

@@ -1,0 +1,60 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}
+Clients
+{% endblock title %}
+{% block content %}
+<header class="masthead" style="background-image: url('{% static 'assets/img/home-bg.jpg' %}">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <h1>Clients</h1>
+                    <a class="btn btn-success" href="{% url 'clientCreate' %}">Añadir</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+</br>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">DNI</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellidos</th>
+                    <th scope="col">Direccion</th>
+                    <th scope="col">Fecha de nacimiento</th>
+                    <th scope="col">Fecha de alta</th>
+                    <th scope="col">¿Activo?</th>
+                    <th scope="col">Eliminar</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for client in object_list %}
+                    <tr>
+                        <th scope="row">{{ client.dni }}</th>
+                        <td>{{ client.name }}</td>
+                        <td>{{ client.surname }}</td>
+                        <td>{{ client.address }}</td>
+                        <td>{{ client.birthDate }}</td>
+                        <td>{{ client.dischargeDate }}</td>
+                        {% if client.active == 0 %}
+                        <td><a class="btn btn-success" href="{% url 'clientActivate' client.id %}">Activar</a></td>
+                        {% else %}
+                        <td><a class="btn btn-danger" href="{% url 'clientDesactivate' client.id %}">Desactivar</a></td>
+                        {% endif %}
+                        <td><a class="btn btn-danger" href="{% url 'clientDelete' client.id %}">Eliminar</a></td>
+                    </tr>
+                    {% empty %}
+                    <li>No employees yet.</li>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,52 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}
+Clients
+{% endblock title %}
+{% block content %}
+<header class="masthead" style="background-image: url('{% static 'assets/img/home-bg.jpg' %}">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <h1>Employees</h1>
+                    <a class="btn btn-success" href="{% url 'employeeCreate' %}">Añadir</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+</br>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">DNI</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellidos</th>
+                    <th scope="col">Direccion</th>
+                    <th scope="col">Biografia</th>
+                    <th scope="col">Eliminar</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for employee in object_list %}
+                    <tr>
+                        <th scope="row">{{ employee.dni }}</th>
+                        <td>{{ employee.name }}</td>
+                        <td>{{ employee.surname }}</td>
+                        <td>{{ employee.address }}</td>
+                        <td>{{ employee.biography }}</td>
+                        <td><a class="btn btn-danger" href="{% url 'employeeDelete' employee.id %}">Eliminar</a></td>
+                    </tr>
+                    {% empty %}
+                    <li>No employees yet.</li>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}
