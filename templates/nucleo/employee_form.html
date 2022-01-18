@@ -1,17 +1,22 @@
 {% extends 'index.html' %}
 {% load static %}
 {% block title %}
-Create Client
+Registrar Empleado
 {% endblock title %}
 {% block content %}
-<form method="post">{% csrf_token %}
 <div class="container">
-    <div class="row">
-        <div class="col">
-            {{ form.as_p }}
-        </div> 
-        <input type="submit" class="btn btn-primary btn-block" value="Confirmar">
+    <div class="card w-50 mx-auto p-3">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="card-title">
+                <h3 class="mb-4">Registro de empleados</h3>
+            </div>
+            {{form2.as_p}}
+            {{form.as_p}}
+            <p>
+                <input type="submit" class="btn btn-primary" value="Confirmar"/>
+            </p>
+        </form>
     </div>
 </div>
-</form>
 {% endblock content %}

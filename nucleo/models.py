@@ -37,7 +37,7 @@ class Client(models.Model):
     address = models.CharField(max_length=150, verbose_name="Dirección")
     birthDate = models.DateField(verbose_name="Fecha de nacimiento")
     dischargeDate = models.DateField(verbose_name="Fecha de alta", default = datetime.date.today())
-    active = models.IntegerField(verbose_name="Activo", default=1)
+    active = models.IntegerField(verbose_name="Activo", default=0)
     idUser = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Usuario")
     
     def __str__(self):
@@ -58,7 +58,7 @@ class Project(models.Model):
     finDate = models.DateField(verbose_name="Fecha de finalización")
     report = models.CharField(max_length=255, verbose_name="Informe final")
     idEmployee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name="Empleado")
-    idEmployee = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Categoría")
+    idCategory = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Categoría")
     
     def __str__(self):
         return self.title

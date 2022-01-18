@@ -1,7 +1,5 @@
 from django import forms
-import datetime
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import fields
 from nucleo.models import User, Client
 
 class ClientForm(forms.ModelForm):
