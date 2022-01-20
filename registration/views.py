@@ -2,12 +2,12 @@ from django.http.response import  HttpResponseRedirect
 from django.urls.base import reverse_lazy
 from django.views.generic.edit import CreateView,DeleteView,UpdateView
 from django.views.generic.detail import DetailView
-from nucleo.models import User, Client
+from nucleo.models import User, Client, Employee
 from django.utils.decorators import method_decorator
 
 
-from registration.forms import UserCreationFormWithEmail, ClientForm
-from registration.decorators import same_user, same_client
+from registration.forms import UserCreationFormWithEmail, ClientForm, EmployeeForm
+from registration.decorators import same_user, same_client, same_employee
 # Create your views here.
 
 @method_decorator(same_user, name='dispatch')
@@ -17,6 +17,15 @@ class ClientDetailsView(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args,**kwargs)
         context['client'] = Client.objects.get(idUser=self.request.user)
+        return context
+
+@method_decorator(same_user, name='dispatch')
+class EmployeeDetailsView(DetailView):
+    model = User
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args,**kwargs)
+        context['employee'] = Employee.objects.get(idUser=self.request.user)
         return context
     
 
@@ -59,6 +68,21 @@ class ClientUpdate(UpdateView):
     
     def get_context_data(self, **kwargs):
         context = super(ClientUpdate, self).get_context_data(**kwargs)
+        if 'form' not in context:
+            context['form'] = self.form_class(self.request.GET)
+        return context
+
+@method_decorator(same_employee, name='dispatch')       
+class EmployeeUpdate(UpdateView):
+    model = Employee
+    form_class = EmployeeForm
+    template_name = 'auth/employee_update.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('index')
+    
+    def get_context_data(self, **kwargs):
+        context = super(EmployeeUpdate, self).get_context_data(**kwargs)
         if 'form' not in context:
             context['form'] = self.form_class(self.request.GET)
         return context

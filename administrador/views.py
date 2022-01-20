@@ -77,6 +77,9 @@ class EmployeeCreate(CreateView):
         form = self.form_class(request.POST)
         form2 = self.second_form_class(request.POST)
         if form.is_valid() and form2.is_valid():
+            user = form2.save(commit=False)
+            user.is_staff = True
+            user.save()
             client = form.save(commit=False)
             client.idUser = form2.save()
             client.save()

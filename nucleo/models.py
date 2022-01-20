@@ -58,7 +58,7 @@ class Project(models.Model):
     finDate = models.DateField(verbose_name="Fecha de finalización")
     report = models.CharField(max_length=255, verbose_name="Informe final")
     idEmployee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name="Empleado")
-    idCategory = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Categoría")
+    idCategory = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Categoría", default=1)
     
     def __str__(self):
         return self.title

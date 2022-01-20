@@ -5,7 +5,13 @@
     <div class="container my-5">
         <div class="card border-dark w-50 mx-auto p-3">
             <div class="card-header">
-                <h3 class="mb-4">Detalles de cliente</h3>
+                <h3 class="mb-4">Detalles de 
+                    {% if not request.user.is_staff %}
+                    cliente
+                    {% else %}
+                    empleado
+                    {% endif %}
+                </h3>
             </div>
             <div class="card-body text-dark">
                 <div class="card-text">
@@ -19,31 +25,50 @@
                         <li class="list-group-item row">
                             <div class="row"> 
                                 <div class="col-lg-6">Nombre:</div>
+                                {% if not request.user.is_staff %}
                                 <div class="col-lg-6">{{client.name}}</div>
+                                {% else %}
+                                <div class="col-lg-6">{{employee.name}}</div>
+                                {% endif %}
                             </div>
                         </li>
                         <li class="list-group-item row">
                             <div class="row"> 
                                 <div class="col-lg-6">Apellidos:</div>
+                                {% if not request.user.is_staff %}
                                 <div class="col-lg-6">{{client.surname}}</div>
+                                {% else %}
+                                <div class="col-lg-6">{{employee.surname}}</div>
+                                {% endif %}
                             </div>
                         </li>
+                        {% if not request.user.is_staff %}
                         <li class="list-group-item row">
-                            <div class="row"> 
+                            <div class="row">
                                 <div class="col-lg-6">DNI:</div>
                                 <div class="col-lg-6">{{client.dni}}</div>
                             </div>
                         </li>
+                        {% endif %}
                         <li class="list-group-item row">
                             <div class="row"> 
                                 <div class="col-lg-6">Dirección:</div>
+                                {% if not request.user.is_staff %}
                                 <div class="col-lg-6">{{client.address}}</div>
+                                {% else %}
+                                <div class="col-lg-6">{{employee.address}}</div>
+                                {% endif %}
                             </div>
                         </li>
                         <li class="list-group-item row">
                             <div class="row"> 
+                                {% if not request.user.is_staff %}
                                 <div class="col-lg-6">Fecha de nacimiento:</div>
                                 <div class="col-lg-6">{{client.birthDate}}</div>
+                                {% else %}
+                                <div class="col-lg-6">Biografía:</div>
+                                <div class="col-lg-6">{{employee.biography}}</div>
+                                {% endif %}
                             </div>
                         </li>
                         <li class="list-group-item row">
@@ -56,7 +81,11 @@
                 </div>
             </div>
             <div class="card-footer">
-                <a class="btn btn-primary my-3" href="{% url 'update' client.pk %}"> Modificar Datos Cliente</a>
+                {%if not request.user.is_staff %}
+                <a class="btn btn-primary my-3" href="{% url 'update_client' client.pk %}"> Modificar Datos Cliente</a>
+                {% else %}
+                <a class="btn btn-primary my-3" href="{% url 'update_employee' employee.pk %}"> Modificar Datos Empleado</a>
+                {% endif %}
                 <a class="btn btn-primary my-3" href="{% url 'updateUser' request.user.pk %}"> Modificar Datos Usuario</a>
                 
             </div>
