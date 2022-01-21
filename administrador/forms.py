@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from nucleo.models import User, Client, Employee
+from nucleo.models import User, Client, Employee, Category
 
 class UserCreationFormWithEmail(UserCreationForm):
     username = forms.CharField(widget= forms.TextInput(attrs={'class': 'form-control mb2', 'placeholder': 'Username'}), label='Nombre de usuario')
@@ -48,3 +48,14 @@ class EmployeeForm(forms.ModelForm):
             'address' : forms.TextInput(attrs={'class' : 'form-control mb2', 'placeholder' : 'Dirección'}),
             'biography' : forms.Textarea(attrs={'class' : 'form-control mb2', 'placeholder' : 'Biografía', 'rows' : 3}),
         }
+        
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category;
+        fields = ('name', 'photo')
+        widgets = {
+            'name' : forms.TextInput(attrs={'class' : 'form-control mb2', 'placeholder' : 'Nombre'}),
+            'photo' : forms.FileInput(attrs={'class' : 'form-control mb2', 'accept' : 'image/*', 'type' : 'file'}),
+        }
+        
+        

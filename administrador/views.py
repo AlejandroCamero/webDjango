@@ -5,9 +5,10 @@ from django.shortcuts import redirect, render
 from django.urls.base import reverse_lazy
 from django.http.response import  HttpResponseRedirect
 
-from .forms import ClientForm,EmployeeForm, UserCreationFormWithEmail
-from nucleo.models import Client,Employee
+from .forms import ClientForm,EmployeeForm, UserCreationFormWithEmail, CategoryForm
+from nucleo.models import Client,Employee, Category
 
+# VISTAS CLIENTES
 
 class ClientCreate(CreateView):
     form_class = ClientForm
@@ -52,7 +53,7 @@ class ClientDelete(DeleteView):
     model=Client
     success_url=reverse_lazy('clients')
 
-
+# VISTAS EMPLEADO
 class EmployeeList(ListView):
     model=Employee
     
@@ -90,3 +91,27 @@ class EmployeeCreate(CreateView):
 class EmployeeDelete(DeleteView):
     model=Employee
     success_url=reverse_lazy('employees')
+
+# VISTAS CATEGORIAS
+
+class CategoryCreate(CreateView):
+    model = Category
+    form_class = CategoryForm
+    template_name = 'administrador/category_form.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('categories')
+
+
+class CategoryList(ListView):
+    model=Category
+    template_name = 'administrador/category_list.html'
+
+
+class CategoryDelete(DeleteView):
+    model=Category
+    template_name = 'administrador/category_confirm_delete.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('categories')
+    

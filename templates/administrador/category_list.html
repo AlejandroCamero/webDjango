@@ -1,0 +1,48 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}
+Categorías
+{% endblock title %}
+{% block content %}
+<header class="masthead" style="background-image: url('{% static 'assets/img/home-bg.jpg' %}">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <h1>Categorías</h1>
+                    <a class="btn btn-success" href="{% url 'categoryCreate' %}">Añadir</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+</br>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Foto</th>
+                    <th scope="col">Modificar</th>
+                    <th scope="col">Eliminar</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for cat in object_list %}
+                    <tr class="border-bottom">
+                        <th scope="row">{{ cat.name }}</th>
+                        <td><img class="border border-dark border-2 rounded" src="{{ cat.photo.url }} " height="75"></td>
+                        <td class="col-2"><a class="btn btn-warning" href="">Modificar</a></td>
+                        <td class="col-2"><a class="btn btn-danger" href="{% url 'categoryDelete' cat.id %}">Eliminar</a></td>
+                    </tr>
+                    {% empty %}
+                    <li>No categories yet.</li>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

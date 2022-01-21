@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # path('employees', views.ListView.as_view(),name="employees"),
@@ -28,4 +30,11 @@ urlpatterns = [
     path('employees', views.EmployeeList.as_view(),name="employees"),
     path('employeeDelete/<int:pk>', views.EmployeeDelete.as_view(),name="employeeDelete"),
     path('employeeCreate', views.EmployeeCreate.as_view(),name="employeeCreate"),
-]
+    
+    path('categories', views.CategoryList.as_view(),name="categories"),
+    path('categoryCreate', views.CategoryCreate.as_view(),name="categoryCreate"),
+    path('categoryDelete/<int:pk>', views.CategoryDelete.as_view(),name="categoryDelete"),
+]+ static(
+        settings.MEDIA_URL, 
+        document_root = settings.MEDIA_ROOT
+    )

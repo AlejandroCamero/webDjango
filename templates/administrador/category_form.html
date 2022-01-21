@@ -1,0 +1,21 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}
+Registrar Categoría
+{% endblock title %}
+{% block content %}
+<div class="container">
+    <div class="card w-50 mx-auto p-3">
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="card-title">
+                <h3 class="mb-4">Registro de categorías</h3>
+            </div>
+            {{form.as_p}}
+            <p>
+                <input type="submit" class="btn btn-primary" value="Confirmar"/>
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock content %}

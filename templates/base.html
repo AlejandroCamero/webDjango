@@ -43,8 +43,9 @@
                                 </button>
                                 <ul class="dropdown-menu" role="menu">
                                     {% if request.user.is_superuser and request.user.is_staff %}
-                                    <li class="nav-item"><a class="nav-link" href="{% url 'clients' %}">Clients</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{% url 'employees' %}">Employees</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{% url 'clients' %}">Clientes</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{% url 'employees' %}">Empleados</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{% url 'categories' %}">Categorías</a></li>
                                     {% elif not request.user.is_superuser and request.user.is_staff %}
                                     <li class="nav-item"><a class="nav-link" href="{% url 'details_employee' request.user.pk %}">Ver perfil</a></li>
                                     <li class="nav-item"><a class="nav-link" href="#">Cosas de empleados</a></li>

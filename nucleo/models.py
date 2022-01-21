@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.signals import user_logged_out
 from django.dispatch import receiver
 from django.contrib import messages
+import os
+
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -45,10 +47,42 @@ class Client(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=150, verbose_name="Nombre")
-    photo = models.CharField(max_length=255, verbose_name="Foto")
+    photo = models.FileField(upload_to='cat/', verbose_name="Foto")
     
     def __str__(self):
         return self.name
+    
+    # These two auto-delete files from filesystem when they are unneeded:
+
+@receiver(models.signals.post_delete, sender=Category)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Deletes file from filesystem
+    when corresponding `MediaFile` object is deleted.
+    """
+    if instance.photo:
+        if os.path.isfile(instance.photo.path):
+            os.remove(instance.photo.path)
+
+@receiver(models.signals.pre_save, sender=Category)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+    """
+    Deletes old file from filesystem
+    when corresponding `MediaFile` object is updated
+    with new file.
+    """
+    if not instance.pk:
+        return False
+
+    try:
+        old_file = Category.objects.get(pk=instance.pk).photo
+    except Category.DoesNotExist:
+        return False
+
+    new_file = instance.photo
+    if not old_file == new_file:
+        if os.path.isfile(old_file.path):
+            os.remove(old_file.path)
 
 class Project(models.Model):
     title = models.CharField(max_length=150, verbose_name="Título")
