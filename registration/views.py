@@ -4,7 +4,7 @@ from django.views.generic.edit import CreateView,DeleteView,UpdateView
 from django.views.generic.detail import DetailView
 from nucleo.models import User, Client, Employee
 from django.utils.decorators import method_decorator
-
+from django.contrib import messages
 
 from registration.forms import UserCreationFormWithEmail, ClientForm, EmployeeForm
 from registration.decorators import same_user, same_client, same_employee
@@ -35,7 +35,8 @@ class ClientCreate(CreateView):
     template_name = 'registration/register.html'
     
     def get_success_url(self):
-        return reverse_lazy('login')+'/?register'
+        messages.add_message(self.request, messages.SUCCESS, 'Usuario registrado.')
+        return reverse_lazy('login')
     
     def get_context_data(self, **kwargs):
         context = super(ClientCreate, self).get_context_data(**kwargs)
@@ -64,6 +65,7 @@ class ClientUpdate(UpdateView):
     template_name = 'auth/client_update.html'
     
     def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Datos actualizados.')
         return reverse_lazy('index')
     
     def get_context_data(self, **kwargs):
@@ -79,6 +81,7 @@ class EmployeeUpdate(UpdateView):
     template_name = 'auth/employee_update.html'
     
     def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Datos actualizados.')
         return reverse_lazy('index')
     
     def get_context_data(self, **kwargs):
@@ -94,6 +97,7 @@ class UserUpdate(UpdateView):
     template_name = 'auth/user_update.html'
     
     def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Datos actualizados.')
         return reverse_lazy('index')
     
     def get_context_data(self, **kwargs):

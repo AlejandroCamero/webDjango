@@ -3,13 +3,6 @@
 {% block title%}Login{% endblock %}
 {% block content %}
 <main>
-    {% if 'register' in request.GET %}
-    <div class="container my-3 col-6 justify-content-center">
-        <div class="alert alert-success">
-            Usuario registrado con éxito.
-        </div>
-    </div>
-    {% endif %}
     <div class="container my-4">
         <div class="card w-50 mx-auto p-3">
             <form action="" method="POST">

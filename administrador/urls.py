@@ -34,6 +34,7 @@ urlpatterns = [
     path('categories', views.CategoryList.as_view(),name="categories"),
     path('categoryCreate', views.CategoryCreate.as_view(),name="categoryCreate"),
     path('categoryDelete/<int:pk>', views.CategoryDelete.as_view(),name="categoryDelete"),
+    path('categoryUpdate/<int:pk>', views.CategoryUpdate.as_view(),name="categoryUpdate"),
 ]+ static(
         settings.MEDIA_URL, 
         document_root = settings.MEDIA_ROOT

@@ -34,7 +34,7 @@ Categorías
                     <tr class="border-bottom">
                         <th scope="row">{{ cat.name }}</th>
                         <td><img class="border border-dark border-2 rounded" src="{{ cat.photo.url }} " height="75"></td>
-                        <td class="col-2"><a class="btn btn-warning" href="">Modificar</a></td>
+                        <td class="col-2"><a class="btn btn-warning" href="{% url 'categoryUpdate' cat.id %}">Modificar</a></td>
                         <td class="col-2"><a class="btn btn-danger" href="{% url 'categoryDelete' cat.id %}">Eliminar</a></td>
                     </tr>
                     {% empty %}

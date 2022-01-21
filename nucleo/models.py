@@ -31,7 +31,14 @@ class Employee(models.Model):
     
     def __str__(self):
         return self.name + " " + self.surname
-    
+
+@receiver(models.signals.pre_delete, sender=Employee)
+def deactivate_user_on_delete(sender, instance, **kwargs):
+    try:
+        User.objects.filter(pk=instance.idUser.id).update(is_active=False)
+    except Employee.DoesNotExist:
+        return False
+
 class Client(models.Model):
     dni = models.CharField(max_length=9, verbose_name="DNI")
     name = models.CharField(max_length=40, verbose_name="Nombre")
@@ -45,6 +52,14 @@ class Client(models.Model):
     def __str__(self):
         return self.name + " " + self.surname
 
+@receiver(models.signals.pre_delete, sender=Client)
+def deactivate_user_on_delete(sender, instance, **kwargs):
+    try:
+        User.objects.filter(pk=instance.idUser.id).update(is_active=False)
+    except Client.DoesNotExist:
+        return False
+    
+
 class Category(models.Model):
     name = models.CharField(max_length=150, verbose_name="Nombre")
     photo = models.FileField(upload_to='cat/', verbose_name="Foto")
@@ -56,21 +71,12 @@ class Category(models.Model):
 
 @receiver(models.signals.post_delete, sender=Category)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
-    """
-    Deletes file from filesystem
-    when corresponding `MediaFile` object is deleted.
-    """
     if instance.photo:
         if os.path.isfile(instance.photo.path):
             os.remove(instance.photo.path)
 
 @receiver(models.signals.pre_save, sender=Category)
 def auto_delete_file_on_change(sender, instance, **kwargs):
-    """
-    Deletes old file from filesystem
-    when corresponding `MediaFile` object is updated
-    with new file.
-    """
     if not instance.pk:
         return False
 

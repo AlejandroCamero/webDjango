@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 {% load static %}
 {% block title %}
-Categoría
+Borrar Categoría
 {% endblock title %}
 {% block content %}
 <header class="masthead" style="background-image: url('{% static 'assets/img/home-bg.jpg' %}">
@@ -11,7 +11,7 @@ Categoría
                 <div class="site-heading">
                     <h1>Categoría</h1>
                     <form method="post">{% csrf_token %}
-                        <p>Are you sure you want to delete "{{ object }}"?</p>
+                        <p>¿Seguro que quieres borrar "{{ object }}"?</p>
                         {{ form }}
                         <input class="btn btn-warning" type="submit" value="Confirm">
                     </form>

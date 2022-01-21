@@ -1,7 +1,7 @@
 from django.views.generic.edit import CreateView,DeleteView,UpdateView
 from django.views.generic.list import ListView
 from django.contrib import messages
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.urls.base import reverse_lazy
 from django.http.response import  HttpResponseRedirect
 
@@ -16,7 +16,8 @@ class ClientCreate(CreateView):
     template_name = 'nucleo/client_form.html'
     
     def get_success_url(self):
-        return reverse_lazy('clients')+'?register'
+        messages.add_message(self.request, messages.SUCCESS, 'Cliente creado.')
+        return reverse_lazy('clients')
     
     def get_context_data(self, **kwargs):
         context = super(ClientCreate, self).get_context_data(**kwargs)
@@ -40,10 +41,12 @@ class ClientCreate(CreateView):
 
 def ClientActivate(request,pk):
     Client.objects.filter(pk=pk).update(active=1)
+    messages.add_message(request, messages.INFO, 'Cliente activado.')
     return redirect('clients')
 
 def ClientDesactivate(request,pk):
     Client.objects.filter(pk=pk).update(active=0)
+    messages.add_message(request, messages.INFO, 'Cliente desactivado.')
     return redirect('clients')
     
 class ClientList(ListView):
@@ -51,7 +54,10 @@ class ClientList(ListView):
     
 class ClientDelete(DeleteView):
     model=Client
-    success_url=reverse_lazy('clients')
+    
+    def get_success_url(self):
+        messages.add_message(self.request, messages.INFO, 'Cliente borrado.')
+        return reverse_lazy('clients')
 
 # VISTAS EMPLEADO
 class EmployeeList(ListView):
@@ -63,7 +69,8 @@ class EmployeeCreate(CreateView):
     template_name = 'nucleo/employee_form.html'
     
     def get_success_url(self):
-        return reverse_lazy('employees')+'?register'
+        messages.add_message(self.request, messages.SUCCESS, 'Empleado creado.')
+        return reverse_lazy('employees')
     
     def get_context_data(self, **kwargs):
         context = super(EmployeeCreate, self).get_context_data(**kwargs)
@@ -91,6 +98,10 @@ class EmployeeCreate(CreateView):
 class EmployeeDelete(DeleteView):
     model=Employee
     success_url=reverse_lazy('employees')
+    
+    def get_success_url(self):
+        messages.add_message(self.request, messages.INFO, 'Empleado eliminado.')
+        return reverse_lazy('employees')
 
 # VISTAS CATEGORIAS
 
@@ -100,6 +111,7 @@ class CategoryCreate(CreateView):
     template_name = 'administrador/category_form.html'
     
     def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Categoría creada.')
         return reverse_lazy('categories')
 
 
@@ -108,10 +120,21 @@ class CategoryList(ListView):
     template_name = 'administrador/category_list.html'
 
 
+class CategoryUpdate(UpdateView):
+    model=Category
+    form_class = CategoryForm
+    template_name = 'administrador/category_form.html'
+    
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Categoría actualizada.')
+        return reverse_lazy('categories')
+
+
 class CategoryDelete(DeleteView):
     model=Category
     template_name = 'administrador/category_confirm_delete.html'
     
     def get_success_url(self):
+        messages.add_message(self.request, messages.INFO, 'Categoría borrada.')
         return reverse_lazy('categories')
     
