@@ -48,10 +48,12 @@
                                     <li class="nav-item"><a class="nav-link" href="{% url 'categories' %}">Categorías</a></li>
                                     {% elif not request.user.is_superuser and request.user.is_staff %}
                                     <li class="nav-item"><a class="nav-link" href="{% url 'details_employee' request.user.pk %}">Ver perfil</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#">Cosas de empleados</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{% url 'projects' %}">Proyectos Actuales</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{% url 'MyEmployeeProjects' %}">Proyectos Antiguos</a></li>
                                     {% else %}
                                     <li class="nav-item"><a class="nav-link" href="{% url 'details_client' request.user.pk %}">Ver perfil</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#">Cosas de clientes</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{% url 'AllProjects' %}">Todos los proyectos</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{% url 'MyClientProjects' %}">Mis Proyectos</a></li>
                                     {% endif %}
                                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                                 </ul>

@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}
+Registrar proyecto
+{% endblock title %}
+{% block content %}
+<br>
+<div class="container">
+    <div class="card w-50 mx-auto p-3">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="card-title">
+                <h3 class="mb-4">Registro de proyectos</h3>
+            </div>
+            {{form.as_p}}
+            <p>
+                <input type="submit" class="btn btn-primary" value="Confirmar"/>
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock content %}

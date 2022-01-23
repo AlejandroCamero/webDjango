@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from django.db import models
 import datetime
 from django.contrib.auth.models import AbstractUser
@@ -95,7 +96,7 @@ class Project(models.Model):
     description = models.CharField(max_length=255, verbose_name="Descripción")
     level = models.IntegerField(verbose_name="Nivel")
     initDate = models.DateField(verbose_name="Fecha de inicio")
-    finDate = models.DateField(verbose_name="Fecha de finalización")
+    finDate = models.DateField(verbose_name="Fecha de finalización",default="0001-01-01")
     report = models.CharField(max_length=255, verbose_name="Informe final")
     idEmployee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name="Empleado")
     idCategory = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Categoría", default=1)
@@ -109,5 +110,8 @@ class Participate(models.Model):
     idProject = models.ForeignKey(Project, on_delete=models.CASCADE, verbose_name="Proyecto")
     enrollmentDate = models.DateField(verbose_name="Fecha de inscripción")
     role = models.CharField(max_length=100, verbose_name="Rol")
+    
+    def __str__(self):
+        return self.idClient + " " + self.idProject
     
 

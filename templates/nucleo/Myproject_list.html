@@ -1,0 +1,63 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}
+Empleados
+{% endblock title %}
+{% block content %}
+<header class="masthead" style="background-image: url('{% static 'assets/img/home-bg.jpg' %}">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <h1>Mis Proyectos</h1>
+                    {% if request.user.is_superuser and request.user.is_staff %}
+                    <a class="btn btn-success" href="{% url 'projectCreate' %}">Añadir</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+</br>
+<div class="container">
+    <div class="row">
+        <div class="col">
+              <br>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Titulo</th>
+                    <th scope="col">Descripcion</th>
+                    <th scope="col">Nivel</th>
+                    <th scope="col">Fecha de inicio</th>
+                    <th scope="col">Categoria</th>
+                    {% if request.user.is_superuser or request.user.is_staff %}
+                    <th scope="col">Fecha de finalización</th>
+                    <th scope="col">Informe final</th>
+                    <th scope="col">Modificar</th>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody>
+                    {% for participate in object_list %}
+                    <tr>
+                        <th scope="row">{{ participate.idProject.title }}</th>
+                        <td>{{ participate.idProject.description }}</td>
+                        <td>{{ participate.idProject.level }}</td>
+                        <td>{{ participate.idProject.initDate }}</td>
+                        <td>{{ participate.idProject.idCategory.name }}</td>
+                        {% if request.user.is_superuser or request.user.is_staff %}
+                        <td>{{ participate.idProject.finDate }}</td>
+                        <td>{{ participate.idProject.report }}</td>
+                        <td><a class="btn btn-info" href="{% url 'projectUpdate' participate.idProject.id %}">Modificar</a></td>
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+                    <li>No projects yet.</li>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

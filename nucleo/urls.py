@@ -23,4 +23,14 @@ urlpatterns = [
     path('samplePost', views.SamplePostView.as_view(),name="samplePost"),
     path('contact', views.ContactView.as_view(),name="contact"),
     path('', views.index,name="index"),
+    
+    path('AllProjects',views.AllProjectList,name="AllProjects"),
+    path('project/',views.project,name="project"),
+    path('MyClientProjects',views.MyClientProjects,name="MyClientProjects"),
+    path('MyEmployeeProjects',views.MyEmployeeProjects,name="MyEmployeeProjects"),
+    path('inscribe/<int:pk>',views.InscribeClient,name="inscribe"),
+    path('projects',views.ProjectList,name="projects"),
+    path('projectCreate',views.ProjectCreate.as_view(),name="projectCreate"),
+    path('projectBaja/<int:pk>',views.ProjectUpdate2,name="projectUpdate2"),
+    path('projectUpdate/<int:pk>',views.ProjectUpdate.as_view(),name="projectUpdate")
 ]
