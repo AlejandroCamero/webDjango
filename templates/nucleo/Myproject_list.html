@@ -30,12 +30,8 @@ Empleados
                     <th scope="col">Descripcion</th>
                     <th scope="col">Nivel</th>
                     <th scope="col">Fecha de inicio</th>
+                    <th scope="col">Fecha de fin</th>
                     <th scope="col">Categoria</th>
-                    {% if request.user.is_superuser or request.user.is_staff %}
-                    <th scope="col">Fecha de finalización</th>
-                    <th scope="col">Informe final</th>
-                    <th scope="col">Modificar</th>
-                    {% endif %}
                 </tr>
                 </thead>
                 <tbody>
@@ -45,12 +41,8 @@ Empleados
                         <td>{{ participate.idProject.description }}</td>
                         <td>{{ participate.idProject.level }}</td>
                         <td>{{ participate.idProject.initDate }}</td>
-                        <td>{{ participate.idProject.idCategory.name }}</td>
-                        {% if request.user.is_superuser or request.user.is_staff %}
                         <td>{{ participate.idProject.finDate }}</td>
-                        <td>{{ participate.idProject.report }}</td>
-                        <td><a class="btn btn-info" href="{% url 'projectUpdate' participate.idProject.id %}">Modificar</a></td>
-                        {% endif %}
+                        <td>{{ participate.idProject.idCategory.name }}</td>
                     </tr>
                     {% empty %}
                     <li>No projects yet.</li>

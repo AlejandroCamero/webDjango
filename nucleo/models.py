@@ -33,10 +33,10 @@ class Employee(models.Model):
     def __str__(self):
         return self.name + " " + self.surname
 
-@receiver(models.signals.pre_delete, sender=Employee)
-def deactivate_user_on_delete(sender, instance, **kwargs):
+@receiver(models.signals.post_delete, sender=Employee)
+def delete_user_on_delete_employee(sender, instance, **kwargs):
     try:
-        User.objects.filter(pk=instance.idUser.id).update(is_active=False)
+        User.objects.filter(pk=instance.idUser.id).delete()
     except Employee.DoesNotExist:
         return False
 
@@ -53,10 +53,10 @@ class Client(models.Model):
     def __str__(self):
         return self.name + " " + self.surname
 
-@receiver(models.signals.pre_delete, sender=Client)
-def deactivate_user_on_delete(sender, instance, **kwargs):
+@receiver(models.signals.post_delete, sender=Client)
+def delete_user_on_delete_client(sender, instance, **kwargs):
     try:
-        User.objects.filter(pk=instance.idUser.id).update(is_active=False)
+        User.objects.filter(pk=instance.idUser.id).delete()
     except Client.DoesNotExist:
         return False
     
@@ -96,7 +96,7 @@ class Project(models.Model):
     description = models.CharField(max_length=255, verbose_name="Descripción")
     level = models.IntegerField(verbose_name="Nivel")
     initDate = models.DateField(verbose_name="Fecha de inicio")
-    finDate = models.DateField(verbose_name="Fecha de finalización",default="0001-01-01")
+    finDate = models.DateField(verbose_name="Fecha de finalización")
     report = models.CharField(max_length=255, verbose_name="Informe final")
     idEmployee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name="Empleado")
     idCategory = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Categoría", default=1)
@@ -112,6 +112,6 @@ class Participate(models.Model):
     role = models.CharField(max_length=100, verbose_name="Rol")
     
     def __str__(self):
-        return self.idClient + " " + self.idProject
+        return str(self.idClient) + " " + str(self.idProject)
     
 

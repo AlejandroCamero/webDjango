@@ -10,7 +10,7 @@ Empleados
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="site-heading">
                     <h1>Proyectos</h1>
-                    {% if request.user.is_superuser and request.user.is_staff %}
+                    {% if request.user.is_staff %}
                     <a class="btn btn-success" href="{% url 'projectCreate' %}">Añadir</a>
                     {% endif %}
                 </div>
@@ -45,9 +45,10 @@ Empleados
                     <th scope="col">Descripcion</th>
                     <th scope="col">Nivel</th>
                     <th scope="col">Fecha de inicio</th>
+                    <th scope="col">Fecha de fin</th>
                     <th scope="col">Categoria</th>
+                    <th scope="col">Informe</th>
                     {% if request.user.is_superuser or request.user.is_staff %}
-                    <th scope="col">Informe final</th>
                     <th scope="col">Modificar</th>
                     <th scope="col">Dar de baja</th>
                     {% else %}
@@ -62,13 +63,16 @@ Empleados
                         <td>{{ project.description }}</td>
                         <td>{{ project.level }}</td>
                         <td>{{ project.initDate }}</td>
+                        <td>{{ project.finDate }}</td>
                         <td>{{ project.idCategory.name }}</td>
-                        {% if request.user.is_superuser or request.user.is_staff %}
                         <td>{{ project.report }}</td>
+                        {% if project.idEmployee.idUser == request.user and request.user.is_staff %}
                         <td><a class="btn btn-info" href="{% url 'projectUpdate' project.id %}">Modificar</a></td>
-                        <td><a class="btn btn-danger" href="{% url 'projectUpdate2' project.id %}">Dar de baja</a></td>
+                        <td><a class="btn btn-danger" href="{% url 'projectDelete' project.id %}">Dar de baja</a></td>
                         {% else %}
-                        <td><a class="btn btn-info" href="{% url 'inscribe' project.id %}">Inscribirse</a></td>
+                            {% if project.id not in participa %}
+                            <td><a class="btn btn-info" href="{% url 'inscribe' project.id %}">Inscribirse</a></td>
+                            {% endif %}
                         {% endif %}
                     </tr>
                     {% empty %}
