@@ -1,4 +1,3 @@
-from asyncio.windows_events import NULL
 import datetime
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,login
@@ -8,12 +7,10 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView,DeleteView,UpdateView
 from django.utils.decorators import method_decorator
 
-from django.db.models import Q
-
 from django.urls.base import reverse_lazy
 
 from .models import Category, Employee, Project,Participate,Client
-from registration.decorators import same_project_employee
+from registration.decorators import same_project_employee, is_employee, is_client, client_is_active
 from .forms import ProjectForm, ProjectFormUpdate, UserForm
 
 # BASIC TEMPLATES.
@@ -50,34 +47,25 @@ class ContactView(TemplateView):
 
 # OTHER VIEWS
 
-def AllProjectList(request):
-    project = Project.objects.all().order_by('-initDate')
-    categories=Category.objects.all()
-    participa= Participate.objects.filter(idClient__idUser__id = request.user.id)
-    participa_id_list= list()
-    for p in participa:
-        participa_id_list.append(p.idProject.id)
-    return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories, 'participa':participa_id_list})
-
-def project(request):
-    print(request.GET["categorie"])
-    # categories=Category.objects.all()
-    # return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
-
-
+@is_client
+@client_is_active
 def InscribeClient(request,pk):
     client = Client.objects.get(idUser__id=request.user.id)
     project = Project.objects.get(pk=pk)
     if(project.finDate > datetime.date.today()):
-        participate = Participate(idClient=client,idProject=Project.objects.get(pk=pk),enrollmentDate=datetime.date.today(),role="Cliente")
-        participate.save()
-        messages.add_message(request, messages.INFO, 'Cliente inscrito')
+        if (Participate.objects.filter(idClient__id = client.id).filter(idProject__id = project.id) ):
+            messages.add_message(request, messages.ERROR, 'El cliente ya está inscrito en ese proyecto.')
+        else:
+            participate = Participate(idClient=client,idProject=project,enrollmentDate=datetime.date.today(),role="Cliente")
+            participate.save()
+            messages.add_message(request, messages.INFO, 'Cliente inscrito')
     else:
-        messages.add_message(request, messages.WARNING, 'El proyecto finalizó. No se pudo inscribir')
+        messages.add_message(request, messages.ERROR, 'El proyecto finalizó. No se pudo inscribir.')
     return redirect('AllProjects')
 
 # PROYECTOS FINALIZADOS CLIENTE
 
+@is_client
 def MyClientProjects(request):
     now = datetime.datetime.now().strftime('%Y-%m-%d')
     participates = Participate.objects.filter(idClient__idUser__id=request.user.id).filter(idProject__finDate__lt=now).order_by('-enrollmentDate')
@@ -85,18 +73,30 @@ def MyClientProjects(request):
 
 # PROYECTOS FINALIZADOS DE EMPLEADO
 
+@is_employee
 def MyEmployeeProjects(request):
     now = datetime.datetime.now().strftime('%Y-%m-%d')
     project = Project.objects.filter(finDate__lt=now).filter(idEmployee__idUser__id=request.user.id).order_by('finDate')
-    return render(request,'nucleo/project_list.html',{'object_list':project})
+    return render(request,'nucleo/Myproject_list.html',{'object_list':project})
 
 # CRUD PROJECTS
-    
-def ProjectList(request):
-    projects = Project.objects.all().order_by('-initDate')
-    print(projects)
-    return render(request,'nucleo/project_list.html',{'object_list':projects})
+def AllProjectList(request):
+    if (request.method == "GET"):
+        project = Project.objects.all().order_by('-initDate')
+        categories=Category.objects.all()
+        return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
+    else:
+        idCat = request.POST.get('categorie', False)
+        if (idCat == "0"):
+            project = Project.objects.all().order_by('-initDate')
+            categories=Category.objects.all()
+            return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
+        else:
+            project = Project.objects.filter(idCategory__id = idCat).order_by('-initDate')
+            categories=Category.objects.all()
+            return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
 
+@method_decorator(is_employee, name='dispatch')
 class ProjectCreate(CreateView):
     model = Project
     form_class = ProjectForm

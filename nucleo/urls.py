@@ -25,13 +25,10 @@ urlpatterns = [
     path('', views.index,name="index"),
     
     path('AllProjects',views.AllProjectList,name="AllProjects"),
-    path('project/',views.project,name="project"),
-    path('MyClientProjects',views.MyClientProjects,name="MyClientProjects"),
-    path('myEmployeeProjects',views.MyEmployeeProjects,name="MyEmployeeProjects"),
-    path('inscribe/<int:pk>',views.InscribeClient,name="inscribe"),
-    
-    path('projects',views.ProjectList,name="projects"),
     path('projectCreate',views.ProjectCreate.as_view(),name="projectCreate"),
     path('projectBaja/<int:pk>',views.ProjectDelete.as_view(),name="projectDelete"),
-    path('projectUpdate/<int:pk>',views.ProjectUpdate.as_view(),name="projectUpdate")
+    path('projectUpdate/<int:pk>',views.ProjectUpdate.as_view(),name="projectUpdate"),
+    path('clientProjects',views.MyClientProjects,name="MyClientProjects"),
+    path('employeeProjects',views.MyEmployeeProjects,name="MyEmployeeProjects"),
+    path('inscribe/<int:pk>',views.InscribeClient,name="inscribe"),
 ]

@@ -4,12 +4,15 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls.base import reverse_lazy
 from django.http.response import  HttpResponseRedirect
+from django.utils.decorators import method_decorator
 
+from registration.decorators import is_admin
 from .forms import ClientForm,EmployeeForm, UserCreationFormWithEmail, CategoryForm
 from nucleo.models import Client,Employee, Category
 
 # VISTAS CLIENTES
 
+@method_decorator(is_admin, name='dispatch')
 class ClientCreate(CreateView):
     form_class = ClientForm
     second_form_class = UserCreationFormWithEmail
@@ -39,19 +42,23 @@ class ClientCreate(CreateView):
         else:
             return self.render_to_response(self.get_context_data(form=form, form2=form2))
 
+@is_admin
 def ClientActivate(request,pk):
     Client.objects.filter(pk=pk).update(active=1)
     messages.add_message(request, messages.INFO, 'Cliente activado.')
     return redirect('clients')
 
+@is_admin
 def ClientDesactivate(request,pk):
     Client.objects.filter(pk=pk).update(active=0)
     messages.add_message(request, messages.INFO, 'Cliente desactivado.')
     return redirect('clients')
-    
+
+@method_decorator(is_admin, name='dispatch')
 class ClientList(ListView):
     model=Client
-    
+
+@method_decorator(is_admin, name='dispatch')
 class ClientDelete(DeleteView):
     model=Client
     
@@ -60,9 +67,11 @@ class ClientDelete(DeleteView):
         return reverse_lazy('clients')
 
 # VISTAS EMPLEADO
+@method_decorator(is_admin, name='dispatch')
 class EmployeeList(ListView):
     model=Employee
-    
+
+@method_decorator(is_admin, name='dispatch')   
 class EmployeeCreate(CreateView):
     form_class = EmployeeForm
     second_form_class = UserCreationFormWithEmail
@@ -95,6 +104,7 @@ class EmployeeCreate(CreateView):
         else:
             return self.render_to_response(self.get_context_data(form=form, form2=form2))
 
+@method_decorator(is_admin, name='dispatch')
 class EmployeeDelete(DeleteView):
     model=Employee
     success_url=reverse_lazy('employees')
@@ -105,6 +115,7 @@ class EmployeeDelete(DeleteView):
 
 # VISTAS CATEGORIAS
 
+@method_decorator(is_admin, name='dispatch')
 class CategoryCreate(CreateView):
     model = Category
     form_class = CategoryForm
@@ -114,12 +125,12 @@ class CategoryCreate(CreateView):
         messages.add_message(self.request, messages.SUCCESS, 'Categoría creada.')
         return reverse_lazy('categories')
 
-
+@method_decorator(is_admin, name='dispatch')
 class CategoryList(ListView):
     model=Category
     template_name = 'administrador/category_list.html'
 
-
+@method_decorator(is_admin, name='dispatch')
 class CategoryUpdate(UpdateView):
     model=Category
     form_class = CategoryForm
@@ -129,7 +140,7 @@ class CategoryUpdate(UpdateView):
         messages.add_message(self.request, messages.SUCCESS, 'Categoría actualizada.')
         return reverse_lazy('categories')
 
-
+@method_decorator(is_admin, name='dispatch')
 class CategoryDelete(DeleteView):
     model=Category
     template_name = 'administrador/category_confirm_delete.html'

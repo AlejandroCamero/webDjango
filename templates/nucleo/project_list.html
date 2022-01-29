@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 {% load static %}
 {% block title %}
-Empleados
+Proyectos
 {% endblock title %}
 {% block content %}
 <header class="masthead" style="background-image: url('{% static 'assets/img/home-bg.jpg' %}">
@@ -22,17 +22,17 @@ Empleados
 <div class="container">
     <div class="row">
         <div class="col">
-            <form action="/project/" method="GET">
+            <form action="{% url 'AllProjects' %}" method="POST">
             <div class="input-group">
-                
-                    <select class="custom-select" id="inputGroupSelect04">
-                    <option selected>Todos los proyectos</option>
-                    {% for categorie in categories %}
-                    <option type="text" value="{{categorie.name}}" name="categorie">{{categorie.name}}</option>
-                    {% endfor %}
+                    {% csrf_token %}
+                    <select class="custom-select" id="inputGroupSelect04" name="categorie">
+                        <option selected value=0>Todos los proyectos</option>
+                        {% for categorie in categories %}
+                        <option type="text" value="{{categorie.id}}">{{categorie.name}}</option>
+                        {% endfor %}
                     </select>
                     <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="submit">Filtrar</button>
+                        <button class="btn btn-outline-secondary" type="submit">Filtrar</button>
                     </div>
                 
               </div>
@@ -41,12 +41,12 @@ Empleados
             <table class="table">
                 <thead class="thead-dark">
                 <tr>
-                    <th scope="col">Titulo</th>
-                    <th scope="col">Descripcion</th>
+                    <th scope="col">Título</th>
+                    <th scope="col">Descripción</th>
                     <th scope="col">Nivel</th>
                     <th scope="col">Fecha de inicio</th>
                     <th scope="col">Fecha de fin</th>
-                    <th scope="col">Categoria</th>
+                    <th scope="col">Categoría</th>
                     <th scope="col">Informe</th>
                     {% if request.user.is_superuser or request.user.is_staff %}
                     <th scope="col">Modificar</th>
@@ -69,10 +69,8 @@ Empleados
                         {% if project.idEmployee.idUser == request.user and request.user.is_staff %}
                         <td><a class="btn btn-info" href="{% url 'projectUpdate' project.id %}">Modificar</a></td>
                         <td><a class="btn btn-danger" href="{% url 'projectDelete' project.id %}">Dar de baja</a></td>
-                        {% else %}
-                            {% if project.id not in participa %}
-                            <td><a class="btn btn-info" href="{% url 'inscribe' project.id %}">Inscribirse</a></td>
-                            {% endif %}
+                        {% elif not request.user.is_staff%}
+                        <td><a class="btn btn-info" href="{% url 'inscribe' project.id %}">Inscribirse</a></td>
                         {% endif %}
                     </tr>
                     {% empty %}

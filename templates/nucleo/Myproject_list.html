@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 {% load static %}
 {% block title %}
-Empleados
+Mis proyectos
 {% endblock title %}
 {% block content %}
 <header class="masthead" style="background-image: url('{% static 'assets/img/home-bg.jpg' %}">
@@ -9,10 +9,7 @@ Empleados
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="site-heading">
-                    <h1>Mis Proyectos</h1>
-                    {% if request.user.is_superuser and request.user.is_staff %}
-                    <a class="btn btn-success" href="{% url 'projectCreate' %}">Añadir</a>
-                    {% endif %}
+                    <h1>Mis Proyectos finalizados</h1>
                 </div>
             </div>
         </div>
@@ -32,17 +29,35 @@ Empleados
                     <th scope="col">Fecha de inicio</th>
                     <th scope="col">Fecha de fin</th>
                     <th scope="col">Categoria</th>
+                    <th scope="col">Reporte</th>
+                    {% if request.user.is_staff %}
+                    <th scope="col">Modificar</th>
+                    <th scope="col">Dar de baja</th>
+                    {% endif %}
                 </tr>
                 </thead>
                 <tbody>
-                    {% for participate in object_list %}
+                    {% for p in object_list %}
                     <tr>
-                        <th scope="row">{{ participate.idProject.title }}</th>
-                        <td>{{ participate.idProject.description }}</td>
-                        <td>{{ participate.idProject.level }}</td>
-                        <td>{{ participate.idProject.initDate }}</td>
-                        <td>{{ participate.idProject.finDate }}</td>
-                        <td>{{ participate.idProject.idCategory.name }}</td>
+                        {% if not request.user.is_staff %}
+                        <th scope="row">{{ p.idProject.title }}</th>
+                        <td>{{ p.idProject.description }}</td>
+                        <td>{{ p.idProject.level }}</td>
+                        <td>{{ p.idProject.initDate }}</td>
+                        <td>{{ p.idProject.finDate }}</td>
+                        <td>{{ p.idProject.idCategory.name }}</td>
+                        <td>{{ p.idProject.report }}</td>
+                        {% else %}
+                        <th scope="row">{{ p.title }}</th>
+                        <td>{{ p.description }}</td>
+                        <td>{{ p.level }}</td>
+                        <td>{{ p.initDate }}</td>
+                        <td>{{ p.finDate }}</td>
+                        <td>{{ p.idCategory.name }}</td>
+                        <td>{{ p.report }}</td>
+                        <td><a class="btn btn-info" href="{% url 'projectUpdate' p.id %}">Modificar</a></td>
+                        <td><a class="btn btn-danger" href="{% url 'projectDelete' p.id %}">Dar de baja</a></td>
+                        {% endif %}
                     </tr>
                     {% empty %}
                     <li>No projects yet.</li>
