@@ -32,6 +32,26 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model=Project
         fields=['title','description','level','initDate', 'finDate', 'report', 'idCategory']
+        
+    def clean(self):
+        cleaned_data = super(ProjectForm, self).clean()
+        errors = []
+        
+        if 'initDate' in cleaned_data.keys() and 'finDate' in cleaned_data.keys():
+            begin_date = cleaned_data['initDate']
+            final_date = cleaned_data['finDate']
+            if begin_date < datetime.datetime.now().date():
+                begin_date = None
+                errors.append(forms.ValidationError("La fecha de inicio no puede ser inferior al día actual."))
+            elif final_date < begin_date:
+                begin_date = None
+                final_date = None
+                errors.append(forms.ValidationError("La fecha de fin no puede ser menor a la de inicio."))
+            
+            if errors:
+                raise forms.ValidationError(errors)
+
+        return cleaned_data
     
 class ProjectFormUpdate(forms.ModelForm):
     initialDate = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -47,3 +67,19 @@ class ProjectFormUpdate(forms.ModelForm):
     class Meta:
         model=Project
         fields=['title','description','level', 'finDate', 'report', 'idCategory']
+        
+    def clean(self):
+        cleaned_data = super(ProjectFormUpdate, self).clean()
+        errors = []
+        instance = self.instance
+        
+        if 'finDate' in cleaned_data.keys() and instance is not None and instance.id is not None:
+            final_date = cleaned_data['finDate']
+            if final_date < instance.initDate:
+                final_date = None
+                errors.append(forms.ValidationError("La fecha de fin no puede ser menor a la de inicio."))
+            
+            if errors:
+                raise forms.ValidationError(errors)
+
+        return cleaned_data

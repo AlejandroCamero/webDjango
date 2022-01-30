@@ -70,7 +70,7 @@ class ClientDelete(DeleteView):
 @method_decorator(is_admin, name='dispatch')
 class EmployeeList(ListView):
     model=Employee
-
+    
 @method_decorator(is_admin, name='dispatch')   
 class EmployeeCreate(CreateView):
     form_class = EmployeeForm
@@ -103,7 +103,7 @@ class EmployeeCreate(CreateView):
             return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response(self.get_context_data(form=form, form2=form2))
-
+    
 @method_decorator(is_admin, name='dispatch')
 class EmployeeDelete(DeleteView):
     model=Employee

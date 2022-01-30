@@ -103,7 +103,7 @@ class ProjectCreate(CreateView):
     
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, 'Proyecto creado.')
-        return reverse_lazy('projects')
+        return reverse_lazy('AllProjects')
     
     def post(self, request, *args, **kwargs):
         self.object = self.get_object
@@ -123,7 +123,7 @@ class ProjectDelete(DeleteView):
     
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, 'Proyecto eliminado.')
-        return reverse_lazy('projects')
+        return reverse_lazy('AllProjects')
     
 
 @method_decorator(same_project_employee, name='dispatch')
@@ -133,4 +133,4 @@ class ProjectUpdate(UpdateView):
     
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, 'Proyecto actualizado.')
-        return reverse_lazy('projects')
+        return reverse_lazy('AllProjects')

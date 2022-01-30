@@ -1,6 +1,6 @@
 from django.http.response import  HttpResponseRedirect
 from django.urls.base import reverse_lazy
-from django.views.generic.edit import CreateView,DeleteView,UpdateView
+from django.views.generic.edit import CreateView,UpdateView
 from django.views.generic.detail import DetailView
 from nucleo.models import User, Client, Employee
 from django.utils.decorators import method_decorator
