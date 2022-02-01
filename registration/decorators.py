@@ -45,7 +45,7 @@ def same_project_employee(func):
 def is_employee(func):
     def check_and_call(request, *args, **kwargs):
         if not (request.user.is_staff and not request.user.is_superuser):
-            messages.add_message(request, messages.ERROR, 'Acción no permitida.')
+            messages.add_message(request, messages.ERROR, 'Acción no permitida empleado.')
             return HttpResponseRedirect('/nucleo/')
         return func(request, *args, **kwargs)
     return check_and_call
@@ -53,7 +53,7 @@ def is_employee(func):
 def is_client(func):
     def check_and_call(request, *args, **kwargs):
         if request.user.is_staff:
-            messages.add_message(request, messages.ERROR, 'Acción no permitida.')
+            messages.add_message(request, messages.ERROR, 'Acción no permitida cliente.')
             return HttpResponseRedirect('/nucleo/')
         return func(request, *args, **kwargs)
     return check_and_call

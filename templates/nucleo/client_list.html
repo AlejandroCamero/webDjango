@@ -30,6 +30,7 @@ Clientes
                     <th scope="col">Fecha de nacimiento</th>
                     <th scope="col">Fecha de alta</th>
                     <th scope="col">¿Activo?</th>
+                    <th scope="col">Modificar</th>
                     <th scope="col">Eliminar</th>
                 </tr>
                 </thead>
@@ -47,6 +48,7 @@ Clientes
                         {% else %}
                         <td><a class="btn btn-danger" href="{% url 'clientDesactivate' client.id %}">Desactivar</a></td>
                         {% endif %}
+                        <td><a class="btn btn-info" href="{% url 'updateClientAdmin' client.id %}">Modificar</a></td>
                         <td><a class="btn btn-danger" href="{% url 'clientDelete' client.id %}">Eliminar</a></td>
                     </tr>
                     {% empty %}

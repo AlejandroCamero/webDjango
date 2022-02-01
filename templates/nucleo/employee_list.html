@@ -28,6 +28,7 @@ Empleados
                     <th scope="col">Apellidos</th>
                     <th scope="col">Direccion</th>
                     <th scope="col">Biografia</th>
+                    <th scope="col">Modificar</th>
                     <th scope="col">Eliminar</th>
                 </tr>
                 </thead>
@@ -39,6 +40,7 @@ Empleados
                         <td>{{ employee.surname }}</td>
                         <td>{{ employee.address }}</td>
                         <td>{{ employee.biography }}</td>
+                        <td><a class="btn btn-info" href="{% url 'updateEmployeeAdmin' employee.id %}">Modificar</a></td>
                         <td><a class="btn btn-danger" href="{% url 'employeeDelete' employee.id %}">Eliminar</a></td>
                     </tr>
                     {% empty %}

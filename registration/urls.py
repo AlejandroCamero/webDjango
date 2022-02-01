@@ -12,5 +12,6 @@ urlpatterns = [
     path("update/client/<int:pk>",views.ClientUpdate.as_view(),name="update_client"),
     path("update/employee/<int:pk>",views.EmployeeUpdate.as_view(),name="update_employee"),
     path("update/user/<int:pk>",views.UserUpdate.as_view(),name="updateUser"),
+    
 ]
 

@@ -66,7 +66,39 @@ class ClientDelete(DeleteView):
         messages.add_message(self.request, messages.INFO, 'Cliente borrado.')
         return reverse_lazy('clients')
 
+@method_decorator(is_admin, name='dispatch')
+class ClientUpdate(UpdateView):
+    model = Client
+    form_class = ClientForm
+    template_name = 'auth/client_update.html'
+    
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Datos actualizados.')
+        return reverse_lazy('index')
+    
+    def get_context_data(self, **kwargs):
+        context = super(ClientUpdate, self).get_context_data(**kwargs)
+        if 'form' not in context:
+            context['form'] = self.form_class(self.request.GET)
+        return context
+
 # VISTAS EMPLEADO
+@method_decorator(is_admin, name='dispatch')
+class EmployeeUpdate(UpdateView):
+    model = Employee
+    form_class = EmployeeForm
+    template_name = 'auth/employee_update.html'
+    
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Datos actualizados.')
+        return reverse_lazy('index')
+    
+    def get_context_data(self, **kwargs):
+        context = super(EmployeeUpdate, self).get_context_data(**kwargs)
+        if 'form' not in context:
+            context['form'] = self.form_class(self.request.GET)
+        return context
+
 @method_decorator(is_admin, name='dispatch')
 class EmployeeList(ListView):
     model=Employee

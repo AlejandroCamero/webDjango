@@ -26,10 +26,13 @@ urlpatterns = [
     path('clientActivate/<int:pk>', views.ClientActivate,name="clientActivate"),
     path('clientDesactivate/<int:pk>', views.ClientDesactivate,name="clientDesactivate"),
     path('clientCreate', views.ClientCreate.as_view(),name="clientCreate"),
+    path("update/client/<int:pk>",views.ClientUpdate.as_view(),name="updateClientAdmin"),
     
     path('employees', views.EmployeeList.as_view(),name="employees"),
     path('employeeDelete/<int:pk>', views.EmployeeDelete.as_view(),name="employeeDelete"),
     path('employeeCreate', views.EmployeeCreate.as_view(),name="employeeCreate"),
+    path("update/employee/<int:pk>",views.EmployeeUpdate.as_view(),name="updateEmployeeAdmin"),
+    
     
     path('categories', views.CategoryList.as_view(),name="categories"),
     path('categoryCreate', views.CategoryCreate.as_view(),name="categoryCreate"),

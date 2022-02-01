@@ -7,6 +7,9 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView,DeleteView,UpdateView
 from django.utils.decorators import method_decorator
 
+from datetime import date
+import calendar
+
 from django.urls.base import reverse_lazy
 
 from .models import Category, Employee, Project,Participate,Client
@@ -95,6 +98,25 @@ def AllProjectList(request):
             project = Project.objects.filter(idCategory__id = idCat).order_by('-initDate')
             categories=Category.objects.all()
             return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
+        
+# def ProjectsWeek(request):
+#     if (request.method == "GET"):
+#         project = Project.objects.all().order_by('-initDate')
+#         categories=Category.objects.all()
+#         curr_date = date.today()
+#         if(calendar.day_name[curr_date.weekday()]=="Sunday"):
+#             pass
+#         return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
+#     else:
+#         idCat = request.POST.get('categorie', False)
+#         if (idCat == "0"):
+#             project = Project.objects.all().order_by('-initDate')
+#             categories=Category.objects.all()
+#             return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
+#         else:
+#             project = Project.objects.filter(idCategory__id = idCat).order_by('-initDate')
+#             categories=Category.objects.all()
+#             return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
 
 @method_decorator(is_employee, name='dispatch')
 class ProjectCreate(CreateView):
