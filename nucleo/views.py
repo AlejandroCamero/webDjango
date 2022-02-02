@@ -1,4 +1,5 @@
 import datetime
+from pyexpat import model
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,login
 from django.contrib import messages
@@ -13,8 +14,8 @@ import calendar
 from django.urls.base import reverse_lazy
 
 from .models import Category, Employee, Project,Participate,Client
-from registration.decorators import same_project_employee, is_employee, is_client, client_is_active
-from .forms import ProjectForm, ProjectFormUpdate, UserForm
+from registration.decorators import same_project_employee, is_employee, is_client, client_is_active, same_project_participant
+from .forms import ProjectForm, ProjectFormUpdate, UserForm, ParticipateRoleUpdateForm
 
 # BASIC TEMPLATES.
 
@@ -59,7 +60,7 @@ def InscribeClient(request,pk):
         if (Participate.objects.filter(idClient__id = client.id).filter(idProject__id = project.id) ):
             messages.add_message(request, messages.ERROR, 'El cliente ya está inscrito en ese proyecto.')
         else:
-            participate = Participate(idClient=client,idProject=project,enrollmentDate=datetime.date.today(),role="Cliente")
+            participate = Participate(idClient=client,idProject=project,enrollmentDate=datetime.date.today())
             participate.save()
             messages.add_message(request, messages.INFO, 'Cliente inscrito')
     else:
@@ -155,4 +156,20 @@ class ProjectUpdate(UpdateView):
     
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, 'Proyecto actualizado.')
+        return reverse_lazy('AllProjects')
+
+@same_project_employee
+def projectClients(request, pk):
+    project = Project.objects.filter(pk = pk).first()
+    participates = Participate.objects.all().filter(idProject = project)
+    return render(request,'nucleo/project_clients.html',{'object_list':participates, 'project':project})
+
+@method_decorator(same_project_participant, name='dispatch')
+class UpdateRole(UpdateView):
+    form_class = ParticipateRoleUpdateForm
+    model = Participate
+    template_name = 'nucleo/role_form.html'
+    
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Rol actualizado.')
         return reverse_lazy('AllProjects')

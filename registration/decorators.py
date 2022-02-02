@@ -1,5 +1,5 @@
 from django.http.response import  HttpResponseRedirect
-from nucleo.models import User, Client, Employee, Project
+from nucleo.models import User, Client, Employee, Project, Participate
 from django.contrib import messages
 
 def same_user(func):
@@ -42,6 +42,17 @@ def same_project_employee(func):
         return func(request, *args, **kwargs)
     return check_and_call
 
+def same_project_participant(func):
+    def check_and_call(request, *args, **kwargs):
+        pk = kwargs["pk"]
+        participates = Participate.objects.get(pk=pk)
+        employee = Employee.objects.get(idUser=request.user.id)
+        if not (participates.idProject.idEmployee == employee):
+            messages.add_message(request, messages.ERROR, 'Acción no permitida.')
+            return HttpResponseRedirect('/nucleo/')
+        return func(request, *args, **kwargs)
+    return check_and_call
+
 def is_employee(func):
     def check_and_call(request, *args, **kwargs):
         if not (request.user.is_staff and not request.user.is_superuser):
@@ -74,4 +85,3 @@ def is_admin(func):
             return HttpResponseRedirect('/nucleo/')
         return func(request, *args, **kwargs)
     return check_and_call
-

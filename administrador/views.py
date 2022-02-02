@@ -74,7 +74,7 @@ class ClientUpdate(UpdateView):
     
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, 'Datos actualizados.')
-        return reverse_lazy('index')
+        return reverse_lazy('clients')
     
     def get_context_data(self, **kwargs):
         context = super(ClientUpdate, self).get_context_data(**kwargs)
@@ -91,7 +91,7 @@ class EmployeeUpdate(UpdateView):
     
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, 'Datos actualizados.')
-        return reverse_lazy('index')
+        return reverse_lazy('employees')
     
     def get_context_data(self, **kwargs):
         context = super(EmployeeUpdate, self).get_context_data(**kwargs)

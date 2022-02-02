@@ -109,7 +109,7 @@ class Participate(models.Model):
     idClient = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name="Cliente")
     idProject = models.ForeignKey(Project, on_delete=models.CASCADE, verbose_name="Proyecto")
     enrollmentDate = models.DateField(verbose_name="Fecha de inscripción")
-    role = models.CharField(max_length=100, verbose_name="Rol")
+    role = models.CharField(max_length=100, verbose_name="Rol", null=True)
     
     def __str__(self):
         return str(self.idClient) + " " + str(self.idProject)

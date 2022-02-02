@@ -37,6 +37,9 @@ Proyectos
                 
               </div>
             </form>
+        </div>
+    </div>
+</div>
               <br>
             <table class="table">
                 <thead class="thead-dark">
@@ -49,6 +52,7 @@ Proyectos
                     <th scope="col">Categoría</th>
                     <th scope="col">Informe</th>
                     {% if request.user.is_superuser or request.user.is_staff %}
+                    <th scope="col">Participantes</th>
                     <th scope="col">Modificar</th>
                     <th scope="col">Dar de baja</th>
                     {% else %}
@@ -67,10 +71,11 @@ Proyectos
                         <td>{{ project.idCategory.name }}</td>
                         <td>{{ project.report }}</td>
                         {% if project.idEmployee.idUser == request.user and request.user.is_staff %}
-                        <td><a class="btn btn-info" href="{% url 'projectUpdate' project.id %}">Modificar</a></td>
-                        <td><a class="btn btn-danger" href="{% url 'projectDelete' project.id %}">Dar de baja</a></td>
+                        <td class="text-center"><a class="btn btn-info btn-sm" href="{% url 'projectClients' project.id %}"><i class="fas fa-users"></i></a></td>
+                        <td class="text-center"><a class="btn btn-warning btn-sm" href="{% url 'projectUpdate' project.id %}"><i class="fas fa-project-diagram"></i></a></td>
+                        <td class="text-center"><a class="btn btn-danger btn-sm" href="{% url 'projectDelete' project.id %}"><i class="fas fa-trash"></i></a></td>
                         {% elif not request.user.is_staff%}
-                        <td><a class="btn btn-info" href="{% url 'inscribe' project.id %}">Inscribirse</a></td>
+                        <td class="text-center"><a class="btn btn-info btn-sm" href="{% url 'inscribe' project.id %}">Inscribirse</a></td>
                         {% endif %}
                     </tr>
                     {% empty %}
@@ -78,7 +83,5 @@ Proyectos
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
-    </div>
-</div>
+        
 {% endblock content %}

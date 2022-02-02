@@ -1,0 +1,45 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}
+Clientes del proyecto {{project.title}}
+{% endblock title %}
+{% block content %}
+    <div class="container my-5">
+        <div class="card border-dark">
+            <div class="card-header">
+                <h2>{{project.title}}</h2>
+                <h4 class="mb-4">Lista de participantes: </h4>
+            </div>
+            <div class="card-body text-dark">
+                <div class="card-text">
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">DNI</th>
+                                <th scope="col">Nombre completo</th>
+                                <th scope="col">Fecha de inscripción</th>
+                                <th scope="col">Rol</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in object_list %}
+                            <tr>
+                                <th scope="row">{{ p.idClient.dni }}</th>
+                                <td>{{ p.idClient }}</td>
+                                <td>{{ p.enrollmentDate }}</td>
+                                {% if p.role == Null %}
+                                <td><a class="btn btn-succes" href="{% url 'roleAsignment' p.id %}">Asignar rol</a></td>
+                                {% else %}
+                                <td>{{ p.role }}   <a class="btn btn-warning btn-sm" href="{% url 'roleAsignment' p.id %}">Cambiar</a></td>
+                                {% endif %}
+                            </tr>
+                            {% empty %}
+                            <li>No clients available yet.</li>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

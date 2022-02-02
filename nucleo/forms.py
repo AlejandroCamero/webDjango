@@ -1,10 +1,11 @@
+from random import choices
 from django import forms
 
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 import datetime
 
-from .models import Project, Category
+from .models import Project, Category, Participate
 
 User = get_user_model()
 
@@ -83,3 +84,12 @@ class ProjectFormUpdate(forms.ModelForm):
                 raise forms.ValidationError(errors)
 
         return cleaned_data
+
+class ParticipateRoleUpdateForm(forms.ModelForm):
+    choices = (('Junior', 'Junior'),('Senior', 'Senior'),('Project Leader', 'Project Leader'),)
+    role = forms.ChoiceField(choices=choices,widget=forms.Select(attrs={'class': 'form-control mb2', 'placeholder': 'Rol'}), label='Rol')
+    
+    
+    class Meta:
+        model = Participate
+        fields = ['role']
