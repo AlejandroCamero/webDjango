@@ -96,17 +96,23 @@ def AllProjectList(request):
             categories=Category.objects.all()
             return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
         elif (idCat == "-1"):
-            date = datetime.datetime.today()
-            week = date.strftime("%V")
-            week = int(week) + 1
-            project = Project.objects.filter(initDate__week = week).order_by('-initDate')
-            categories=Category.objects.all()
-            return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
+            if(not request.user.is_staff):
+                date = datetime.datetime.today()
+                week = date.strftime("%V")
+                week = int(week) + 1
+                project = Project.objects.filter(initDate__week = week).order_by('-initDate')
+                categories=Category.objects.all()
+                return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
+            else:
+                messages.add_message(request, messages.ERROR, 'Acción no permitida.')
+                project = Project.objects.all().order_by('-initDate')
+                categories=Category.objects.all()
+                return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
         else:
             project = Project.objects.filter(idCategory__id = idCat).order_by('-initDate')
             categories=Category.objects.all()
             return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
-        
+
 # def ProjectsWeek(request):
 #     if (request.method == "GET"):
 #         project = Project.objects.all().order_by('-initDate')
