@@ -28,7 +28,7 @@ Clientes del proyecto {{project.title}}
                                 <td>{{ p.idClient }}</td>
                                 <td>{{ p.enrollmentDate }}</td>
                                 {% if p.role == Null %}
-                                <td><a class="btn btn-succes" href="{% url 'roleAsignment' p.id %}">Asignar rol</a></td>
+                                <td><a class="btn btn-success" href="{% url 'roleAsignment' p.id %}">Asignar rol</a></td>
                                 {% else %}
                                 <td>{{ p.role }}   <a class="btn btn-warning btn-sm" href="{% url 'roleAsignment' p.id %}">Cambiar</a></td>
                                 {% endif %}
