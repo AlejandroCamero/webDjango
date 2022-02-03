@@ -84,6 +84,13 @@ class ProjectFormUpdate(forms.ModelForm):
                 raise forms.ValidationError(errors)
 
         return cleaned_data
+    
+class ProjectReportFormUpdate(forms.ModelForm):
+    report = forms.CharField(widget= forms.TextInput(attrs={'class': 'form-control mb2', 'placeholder': 'Informe'}), label='Informe del proyecto')
+    
+    class Meta:
+        model=Project
+        fields=['report']
 
 class ParticipateRoleUpdateForm(forms.ModelForm):
     choices = (('Junior', 'Junior'),('Senior', 'Senior'),('Project Leader', 'Project Leader'),)

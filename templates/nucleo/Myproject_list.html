@@ -33,6 +33,7 @@ Mis proyectos
                     {% if request.user.is_staff %}
                     <th scope="col">Modificar</th>
                     <th scope="col">Dar de baja</th>
+                    <th scope="col">Finalizar</th>
                     {% endif %}
                 </tr>
                 </thead>
@@ -57,6 +58,7 @@ Mis proyectos
                         <td>{{ p.report }}</td>
                         <td><a class="btn btn-info" href="{% url 'projectUpdate' p.id %}">Modificar</a></td>
                         <td><a class="btn btn-danger" href="{% url 'projectDelete' p.id %}">Dar de baja</a></td>
+                        <td><a class="btn btn-warning" href="{% url 'projectFinal' p.id %}">Finalizar</a></td>
                         {% endif %}
                     </tr>
                     {% empty %}

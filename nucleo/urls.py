@@ -29,6 +29,7 @@ urlpatterns = [
     path('projectCreate',views.ProjectCreate.as_view(),name="projectCreate"),
     path('projectBaja/<int:pk>',views.ProjectDelete.as_view(),name="projectDelete"),
     path('projectUpdate/<int:pk>',views.ProjectUpdate.as_view(),name="projectUpdate"),
+    path('projectFinal/<int:pk>',views.ProjectReportUpdate.as_view(),name="projectFinal"),
     path('projectClients/<int:pk>',views.projectClients,name="projectClients"),
     path('roleAsignment/<int:pk>',views.UpdateRole.as_view(),name="roleAsignment"),
     path('clientProjects',views.MyClientProjects,name="MyClientProjects"),

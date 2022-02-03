@@ -15,7 +15,7 @@ from django.urls.base import reverse_lazy
 
 from .models import Category, Employee, Project,Participate,Client
 from registration.decorators import same_project_employee, is_employee, is_client, client_is_active, same_project_participant
-from .forms import ProjectForm, ProjectFormUpdate, UserForm, ParticipateRoleUpdateForm
+from .forms import ProjectForm, ProjectFormUpdate, UserForm, ParticipateRoleUpdateForm,ProjectReportFormUpdate
 
 # BASIC TEMPLATES.
 
@@ -151,6 +151,28 @@ class ProjectUpdate(UpdateView):
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, 'Proyecto actualizado.')
         return reverse_lazy('AllProjects')
+    
+@method_decorator(same_project_employee, name='dispatch')
+class ProjectReportUpdate(UpdateView):
+    model=Project
+    form_class = ProjectReportFormUpdate
+    
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Proyecto actualizado.')
+        return reverse_lazy('MyEmployeeProjects')
+    
+    def post(self, request, *args, **kwargs):
+        pk=kwargs['pk']
+        self.object = self.get_object
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            project = Project.objects.filter(pk = pk).first()
+            project.finDate= datetime.datetime.now().strftime('%Y-%m-%d')
+            project.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+        
 
 @same_project_employee
 def projectClients(request, pk):
