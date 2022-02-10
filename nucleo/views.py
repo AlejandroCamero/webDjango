@@ -1,5 +1,8 @@
 import datetime
+from http.client import HTTPResponse
+from io import BytesIO
 from pyexpat import model
+from urllib import response
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,login
 from django.contrib import messages
@@ -11,7 +14,16 @@ from django.utils.decorators import method_decorator
 from datetime import date
 import calendar
 
+
+from reportlab.pdfgen import canvas
+from django.http import FileResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+
+
 from django.urls.base import reverse_lazy
+
+from django.conf import settings
 
 from .models import Category, Employee, Project,Participate,Client
 from registration.decorators import same_project_employee, is_employee, is_client, client_is_active, same_project_participant
@@ -188,4 +200,36 @@ class UpdateRole(UpdateView):
     
     def get_success_url(self):
         messages.add_message(self.request, messages.SUCCESS, 'Rol actualizado.')
-        return reverse_lazy('AllProjects')
+        return reverse_lazy('AllProjects')  
+
+def informe_pdf(request):
+    buffer=BytesIO()
+    pdf = canvas.Canvas(buffer,pagesize=letter,bottomup=0)
+    textob=pdf.beginText()
+    textob.setTextOrigin(inch,inch)
+    textob.setFont("Helvetica",14)
+    
+    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).order_by('-enrollmentDate')
+    
+    lines=[]
+    
+    for participate in participates:
+        print(participate.idProject.description)
+        lines.append(participate)
+    
+    for participate in participates:
+        textob.textLine("Proyecto: " + participate.idProject.title)
+        textob.textLine("- Descripcion: " + participate.idProject.description)
+        textob.textLine("- Nivel: " + str(participate.idProject.level))
+        textob.textLine("- Fecha de Inicio: " + str(participate.idProject.initDate))
+        textob.textLine("- Fecha final: " + str(participate.idProject.finDate))
+        textob.textLine("- Categoria: " + participate.idProject.idCategory.name)
+        textob.textLine("- Reporte: " + participate.idProject.report)
+        textob.textLine("")
+            
+    pdf.drawText(textob)
+    pdf.showPage()
+    pdf.save()
+    buffer.seek(0)
+    
+    return FileResponse(buffer, as_attachment=True,filename='informe.pdf')

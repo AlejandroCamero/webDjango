@@ -19,6 +19,7 @@ Mis proyectos
 <div class="container">
     <div class="row">
         <div class="col">
+            <a class="btn btn-info" href="{% url 'informe_pdf' %}">Generar PDF</a>
               <br>
             <table class="table">
                 <thead class="thead-dark">
@@ -34,6 +35,7 @@ Mis proyectos
                     <th scope="col">Modificar</th>
                     <th scope="col">Dar de baja</th>
                     <th scope="col">Finalizar</th>
+                    {% else %}
                     {% endif %}
                 </tr>
                 </thead>

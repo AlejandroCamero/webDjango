@@ -35,4 +35,6 @@ urlpatterns = [
     path('clientProjects',views.MyClientProjects,name="MyClientProjects"),
     path('employeeProjects',views.MyEmployeeProjects,name="MyEmployeeProjects"),
     path('inscribe/<int:pk>',views.InscribeClient,name="inscribe"),
+    
+    path('informe_pdf',views.informe_pdf,name="informe_pdf"),
 ]
