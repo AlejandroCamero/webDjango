@@ -97,7 +97,8 @@ class Project(models.Model):
     level = models.IntegerField(verbose_name="Nivel")
     initDate = models.DateField(verbose_name="Fecha de inicio")
     finDate = models.DateField(verbose_name="Fecha de finalización")
-    report = models.CharField(max_length=255, verbose_name="Informe final")
+    report = models.CharField(max_length=255, verbose_name="Informe final", null=True)
+    is_finalized = models.BooleanField(default=False, verbose_name="Finalizado")
     idEmployee = models.ForeignKey(Employee, on_delete=models.CASCADE, verbose_name="Empleado")
     idCategory = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name="Categoría", default=1)
     

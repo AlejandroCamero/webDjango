@@ -28,9 +28,18 @@ Clientes del proyecto {{project.title}}
                                 <td>{{ p.idClient }}</td>
                                 <td>{{ p.enrollmentDate }}</td>
                                 {% if p.role == Null %}
-                                <td><a class="btn btn-success" href="{% url 'roleAsignment' p.id %}">Asignar rol</a></td>
+                                <td>
+                                    {% if not project.is_finalized %}
+                                    <a class="btn btn-success btn-sm" href="{% url 'roleAsignment' p.id %}">Asignar rol</a>
+                                    {% else %}
+                                    No rol asignado
+                                    {% endif %}
+                                </td>
                                 {% else %}
-                                <td>{{ p.role }}   <a class="btn btn-warning btn-sm" href="{% url 'roleAsignment' p.id %}">Cambiar</a></td>
+                                <td>{{ p.role }}
+                                    {% if not project.is_finalized %}   
+                                    <a class="btn btn-warning btn-sm" href="{% url 'roleAsignment' p.id %}">Cambiar</a></td>
+                                    {% endif %}
                                 {% endif %}
                             </tr>
                             {% empty %}

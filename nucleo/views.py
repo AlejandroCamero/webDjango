@@ -1,8 +1,5 @@
 import datetime
-from http.client import HTTPResponse
 from io import BytesIO
-from pyexpat import model
-from urllib import response
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,login
 from django.contrib import messages
@@ -11,10 +8,6 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView,DeleteView,UpdateView
 from django.utils.decorators import method_decorator
 
-from datetime import date
-import calendar
-
-
 from reportlab.pdfgen import canvas
 from django.http import FileResponse
 from reportlab.lib.pagesizes import letter
@@ -22,8 +15,6 @@ from reportlab.lib.units import inch
 
 
 from django.urls.base import reverse_lazy
-
-from django.conf import settings
 
 from .models import Category, Employee, Project,Participate,Client
 from registration.decorators import same_project_employee, is_employee, is_client, client_is_active, same_project_participant
@@ -84,7 +75,7 @@ def InscribeClient(request,pk):
 @is_client
 def MyClientProjects(request):
     now = datetime.datetime.now().strftime('%Y-%m-%d')
-    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).filter(idProject__finDate__lt=now).order_by('-enrollmentDate')
+    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).filter(idProject__is_finalized=True).order_by('-enrollmentDate')
     return render(request,'nucleo/Myproject_list.html',{'object_list':participates})
 
 # PROYECTOS FINALIZADOS DE EMPLEADO
@@ -92,19 +83,26 @@ def MyClientProjects(request):
 @is_employee
 def MyEmployeeProjects(request):
     now = datetime.datetime.now().strftime('%Y-%m-%d')
-    project = Project.objects.filter(finDate__lt=now).filter(idEmployee__idUser__id=request.user.id).order_by('finDate')
+    project = Project.objects.filter(is_finalized=True).filter(idEmployee__idUser__id=request.user.id).order_by('finDate')
     return render(request,'nucleo/Myproject_list.html',{'object_list':project})
 
 # CRUD PROJECTS
 def AllProjectList(request):
+    now = datetime.datetime.today().date()
     if (request.method == "GET"):
-        project = Project.objects.all().order_by('-initDate')
+        if (request.user.is_staff):
+            project = Project.objects.filter(is_finalized=False).filter(idEmployee__idUser__id=request.user.id).order_by('-initDate')
+        else:
+            project = Project.objects.all().order_by('-initDate')
         categories=Category.objects.all()
-        return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
+        return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories, 'now':now})
     else:
         idCat = request.POST.get('categorie', False)
         if (idCat == "0"):
-            project = Project.objects.all().order_by('-initDate')
+            if (request.user.is_staff):
+                project = Project.objects.filter(is_finalized=False).filter(idEmployee__idUser__id=request.user.id).order_by('-initDate')
+            else:
+                project = Project.objects.all().order_by('-initDate')
             categories=Category.objects.all()
             return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
         elif (idCat == "-1"):
@@ -112,16 +110,19 @@ def AllProjectList(request):
                 date = datetime.datetime.today()
                 week = date.strftime("%V")
                 week = int(week) + 1
-                project = Project.objects.filter(initDate__week = week).order_by('-initDate')
+                project = Project.objects.filter(is_finalized=False).filter(initDate__week = week).order_by('-initDate')
                 categories=Category.objects.all()
                 return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
             else:
                 messages.add_message(request, messages.ERROR, 'Acción no permitida.')
-                project = Project.objects.all().order_by('-initDate')
+                project = Project.objects.filter(is_finalized=False).filter(idEmployee__idUser__id=request.user.id).order_by('-initDate')
                 categories=Category.objects.all()
                 return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
         else:
-            project = Project.objects.filter(idCategory__id = idCat).order_by('-initDate')
+            if (request.user.is_staff):
+                project = Project.objects.filter(is_finalized=False).filter(idCategory__id = idCat).filter(idEmployee__idUser__id=request.user.id).order_by('-initDate')
+            else:
+                project = Project.objects.filter(idCategory__id = idCat).order_by('-initDate')
             categories=Category.objects.all()
             return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
 
@@ -180,6 +181,8 @@ class ProjectReportUpdate(UpdateView):
         if form.is_valid():
             project = Project.objects.filter(pk = pk).first()
             project.finDate= datetime.datetime.now().strftime('%Y-%m-%d')
+            project.is_finalized=True
+            project.report = form.cleaned_data['report']
             project.save()
             return HttpResponseRedirect(self.get_success_url())
         else:

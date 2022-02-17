@@ -24,7 +24,6 @@ urlpatterns = [
     path('contact', views.ContactView.as_view(),name="contact"),
     path('', views.index,name="index"),
     
-    # path('WeekProjects',views.ProjectsWeek,name="WeekProjects"),
     path('AllProjects',views.AllProjectList,name="AllProjects"),
     path('projectCreate',views.ProjectCreate.as_view(),name="projectCreate"),
     path('projectBaja/<int:pk>',views.ProjectDelete.as_view(),name="projectDelete"),

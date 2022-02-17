@@ -32,9 +32,7 @@ Mis proyectos
                     <th scope="col">Categoria</th>
                     <th scope="col">Reporte</th>
                     {% if request.user.is_staff %}
-                    <th scope="col">Modificar</th>
-                    <th scope="col">Dar de baja</th>
-                    <th scope="col">Finalizar</th>
+                    <th scope="col">Opciones</th>
                     {% else %}
                     {% endif %}
                 </tr>
@@ -58,9 +56,11 @@ Mis proyectos
                         <td>{{ p.finDate }}</td>
                         <td>{{ p.idCategory.name }}</td>
                         <td>{{ p.report }}</td>
-                        <td><a class="btn btn-info" href="{% url 'projectUpdate' p.id %}">Modificar</a></td>
-                        <td><a class="btn btn-danger" href="{% url 'projectDelete' p.id %}">Dar de baja</a></td>
-                        <td><a class="btn btn-warning" href="{% url 'projectFinal' p.id %}">Finalizar</a></td>
+                        <td>
+                            <a class="btn btn-info btn-sm" href="{% url 'projectClients' p.id %}">Ver participantes</a>
+                            <a class="btn btn-warning btn-sm" href="{% url 'projectUpdate' p.id %}">Modificar</a>
+                            <a class="btn btn-danger btn-sm" href="{% url 'projectDelete' p.id %}">Eliminar</a>
+                        </td>
                         {% endif %}
                     </tr>
                     {% empty %}

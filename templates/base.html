@@ -53,7 +53,6 @@
                                     {% else %}
                                     <li class="nav-item"><a class="nav-link" href="{% url 'details_client' request.user.pk %}">Ver perfil</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{% url 'AllProjects' %}">Todos los proyectos</a></li>
-                                    {% comment %} <li class="nav-item"><a class="nav-link" href="{% url 'WeekProjects' %}">Proyectos de la proxima semana</a></li> {% endcomment %}
                                     <li class="nav-item"><a class="nav-link" href="{% url 'MyClientProjects' %}">Mis Proyectos</a></li>
                                     {% endif %}
                                     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
