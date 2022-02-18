@@ -25,7 +25,7 @@ Proyectos
             <form action="{% url 'AllProjects' %}" method="POST">
             <div class="input-group">
                     {% csrf_token %}
-                    <select class="custom-select" id="inputGroupSelect04" name="categorie">
+                    <select class="form-select" id="inputGroupSelect04" name="categorie">
                         <option selected value=0>Todos los proyectos</option>
                         {% if not request.user.is_staff %}
                         <option value=-1>Proyectos de la semana que viene</option>

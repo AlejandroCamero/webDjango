@@ -19,6 +19,7 @@ from django.urls.base import reverse_lazy
 from .models import Category, Employee, Project,Participate,Client
 from registration.decorators import same_project_employee, is_employee, is_client, client_is_active, same_project_participant
 from .forms import ProjectForm, ProjectFormUpdate, UserForm, ParticipateRoleUpdateForm,ProjectReportFormUpdate
+from.constants import ROLES
 
 # BASIC TEMPLATES.
 
@@ -192,8 +193,18 @@ class ProjectReportUpdate(UpdateView):
 @same_project_employee
 def projectClients(request, pk):
     project = Project.objects.filter(pk = pk).first()
-    participates = Participate.objects.all().filter(idProject = project)
-    return render(request,'nucleo/project_clients.html',{'object_list':participates, 'project':project})
+    if (request.method == "GET"):
+        participates = Participate.objects.all().filter(idProject = project)
+        return render(request,'nucleo/project_clients.html',{'object_list':participates, 'project':project, 'roles': ROLES})
+    else:
+        role = request.POST.get('role', False)
+        if (role == "0"):
+            participates = Participate.objects.all().filter(idProject = project)
+            return render(request,'nucleo/project_clients.html',{'object_list':participates, 'project':project, 'roles': ROLES})
+        else:
+            participates = Participate.objects.filter(idProject = project).filter(role=role)
+            return render(request,'nucleo/project_clients.html',{'object_list':participates, 'project':project, 'roles': ROLES})
+        
 
 @method_decorator(same_project_participant, name='dispatch')
 class UpdateRole(UpdateView):
