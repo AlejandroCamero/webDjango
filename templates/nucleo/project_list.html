@@ -65,7 +65,7 @@ Proyectos
                         <td>{{ project.description }}</td>
                         <td>{{ project.level }}</td>
                         <td>{{ project.initDate }}</td>
-                        {% if project.finDate <= now %}
+                        {% if project.finDate <= now and request.user.is_staff%}
                         <td style="color:red">{{ project.finDate }}</td>
                         {% else %}
                         <td>{{ project.finDate }}</td>

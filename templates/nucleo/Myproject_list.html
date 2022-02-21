@@ -9,7 +9,7 @@ Mis proyectos
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="site-heading">
-                    <h1>Mis Proyectos finalizados</h1>
+                    <h1>Proyectos</h1>
                 </div>
             </div>
         </div>
@@ -19,8 +19,23 @@ Mis proyectos
 <div class="container">
     <div class="row">
         <div class="col">
-            <a class="btn btn-info" href="{% url 'informe_pdf' %}">Generar PDF</a>
-              <br>
+            {% if not request.user.is_staff %}
+            <div class="container mb-4">
+                <form action="{% url 'informe_pdf' %}" method="POST">
+                    {%csrf_token%}
+                    <fieldset class="form-group">
+                        <legend>Generar informe entre fechas</legend>
+                        <label for="fecha_ini">Fecha 1</label>
+                        <input class="form-control col-3" type="date" id="fecha_ini" name="fecha_ini">
+                        <label for="fecha_fin">Fecha 2</label>
+                        <input class="form-control col-3" type="date" id="fecha_fin" name="fecha_fin">
+                        <button type="submit" name=""class="btn btn-info mt-4">Generar Informe PDF</button>
+                    </fieldset>
+                </form>
+                <small>NOTA: En el informe sólo aparecen los proyectos finalizados, es decir aquellos marcados con color verde.</small>
+            </div>
+            {% endif %}
+            
             <table class="table">
                 <thead class="thead-dark">
                 <tr>
@@ -33,7 +48,6 @@ Mis proyectos
                     <th scope="col">Reporte</th>
                     {% if request.user.is_staff %}
                     <th scope="col">Opciones</th>
-                    {% else %}
                     {% endif %}
                 </tr>
                 </thead>
@@ -41,7 +55,11 @@ Mis proyectos
                     {% for p in object_list %}
                     <tr>
                         {% if not request.user.is_staff %}
-                        <th scope="row">{{ p.idProject.title }}</th>
+                            {% if p.idProject.is_finalized %}
+                            <th scope="row" style="background-color:#198754; color:white">{{ p.idProject.title }}</th>
+                            {% else %}
+                            <th scope="row">{{ p.idProject.title }}</th>
+                            {% endif %}
                         <td>{{ p.idProject.description }}</td>
                         <td>{{ p.idProject.level }}</td>
                         <td>{{ p.idProject.initDate }}</td>

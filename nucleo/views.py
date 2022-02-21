@@ -76,7 +76,7 @@ def InscribeClient(request,pk):
 @is_client
 def MyClientProjects(request):
     now = datetime.datetime.now().strftime('%Y-%m-%d')
-    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).filter(idProject__is_finalized=True).order_by('-enrollmentDate')
+    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).order_by('-enrollmentDate')
     return render(request,'nucleo/Myproject_list.html',{'object_list':participates})
 
 # PROYECTOS FINALIZADOS DE EMPLEADO
@@ -94,7 +94,7 @@ def AllProjectList(request):
         if (request.user.is_staff):
             project = Project.objects.filter(is_finalized=False).filter(idEmployee__idUser__id=request.user.id).order_by('-initDate')
         else:
-            project = Project.objects.all().order_by('-initDate')
+            project = Project.objects.filter(is_finalized=False).order_by('-initDate')
         categories=Category.objects.all()
         return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories, 'now':now})
     else:
@@ -216,19 +216,31 @@ class UpdateRole(UpdateView):
         messages.add_message(self.request, messages.SUCCESS, 'Rol actualizado.')
         return reverse_lazy('AllProjects')  
 
+# GENERAR PDF
+
+@client_is_active
 def informe_pdf(request):
+    initDate = request.POST['fecha_ini']
+    finDate = request.POST['fecha_fin']
+    if initDate != None and initDate != '' and finDate != None and initDate != '' and initDate < finDate:
+        return gen_pdf(request, initDate, finDate)
+    else:
+        messages.add_message(request, messages.ERROR, 'Las fechas no son válidas')
+        return HttpResponseRedirect('/nucleo/clientProjects')
+
+
+def gen_pdf(request, initDate, finDate):
     buffer=BytesIO()
     pdf = canvas.Canvas(buffer,pagesize=letter,bottomup=0)
     textob=pdf.beginText()
     textob.setTextOrigin(inch,inch)
     textob.setFont("Helvetica",14)
     
-    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).order_by('-enrollmentDate')
+    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).filter(idProject__finDate__gt = initDate).filter(idProject__finDate__lt = finDate).order_by('-enrollmentDate')
     
     lines=[]
     
     for participate in participates:
-        print(participate.idProject.description)
         lines.append(participate)
     
     for participate in participates:
@@ -238,7 +250,10 @@ def informe_pdf(request):
         textob.textLine("- Fecha de Inicio: " + str(participate.idProject.initDate))
         textob.textLine("- Fecha final: " + str(participate.idProject.finDate))
         textob.textLine("- Categoria: " + participate.idProject.idCategory.name)
-        textob.textLine("- Reporte: " + participate.idProject.report)
+        if not participate.idProject.report == None:
+            textob.textLine("- Reporte: " + participate.idProject.report)
+        else:
+            textob.textLine("- Reporte: N/D")
         textob.textLine("")
             
     pdf.drawText(textob)
