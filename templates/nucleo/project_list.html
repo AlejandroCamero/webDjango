@@ -25,7 +25,7 @@ Proyectos
             <form action="{% url 'AllProjects' %}" method="POST">
             <div class="input-group">
                     {% csrf_token %}
-                    <select class="custom-select" id="inputGroupSelect04" name="categorie">
+                    <select class="form-select" id="inputGroupSelect04" name="categorie">
                         <option selected value=0>Todos los proyectos</option>
                         {% if not request.user.is_staff %}
                         <option value=-1>Proyectos de la semana que viene</option>
@@ -55,14 +55,7 @@ Proyectos
                     <th scope="col">Fecha de inicio</th>
                     <th scope="col">Fecha de fin</th>
                     <th scope="col">Categoría</th>
-                    <th scope="col">Informe</th>
-                    {% if request.user.is_superuser or request.user.is_staff %}
-                    <th scope="col">Participantes</th>
-                    <th scope="col">Modificar</th>
-                    <th scope="col">Dar de baja</th>
-                    {% else %}
-                    <th scope="col">Inscribirse</th>
-                    {% endif %}
+                    <th scope="col">Opciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -72,13 +65,19 @@ Proyectos
                         <td>{{ project.description }}</td>
                         <td>{{ project.level }}</td>
                         <td>{{ project.initDate }}</td>
+                        {% if project.finDate <= now and request.user.is_staff%}
+                        <td style="color:red">{{ project.finDate }}</td>
+                        {% else %}
                         <td>{{ project.finDate }}</td>
+                        {% endif %}
                         <td>{{ project.idCategory.name }}</td>
-                        <td>{{ project.report }}</td>
                         {% if project.idEmployee.idUser == request.user and request.user.is_staff %}
-                        <td class="text-center"><a class="btn btn-info btn-sm" href="{% url 'projectClients' project.id %}"><i class="fas fa-users"></i></a></td>
-                        <td class="text-center"><a class="btn btn-warning btn-sm" href="{% url 'projectUpdate' project.id %}"><i class="fas fa-project-diagram"></i></a></td>
-                        <td class="text-center"><a class="btn btn-danger btn-sm" href="{% url 'projectDelete' project.id %}"><i class="fas fa-trash"></i></a></td>
+                        <td class="text-center">
+                            <a class="btn btn-info btn-sm" href="{% url 'projectClients' project.id %}">Ver Participantes</a>
+                            <a class="btn btn-success btn-sm" href="{% url 'projectFinal' project.id %}">Finalizar</a>
+                            <a class="btn btn-warning btn-sm" href="{% url 'projectUpdate' project.id %}">Modificar</a>
+                            <a class="btn btn-danger btn-sm" href="{% url 'projectDelete' project.id %}">Eliminar</a>
+                        </td>
                         {% elif not request.user.is_staff%}
                         <td class="text-center"><a class="btn btn-info btn-sm" href="{% url 'inscribe' project.id %}">Inscribirse</a></td>
                         {% endif %}

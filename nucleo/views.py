@@ -1,9 +1,5 @@
 import datetime
-from http.client import HTTPResponse
 from io import BytesIO
-from lib2to3.pgen2.parse import ParseError
-from pyexpat import model
-from urllib import response
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,login
 from django.contrib import messages
@@ -11,11 +7,6 @@ from django.shortcuts import redirect, render
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView,DeleteView,UpdateView
 from django.utils.decorators import method_decorator
-
-from datetime import date
-import calendar
-
-from .models import User
 
 from reportlab.pdfgen import canvas
 from django.http import FileResponse
@@ -25,17 +16,10 @@ from reportlab.lib.units import inch
 
 from django.urls.base import reverse_lazy
 
-from django.conf import settings
-
 from .models import Category, Employee, Project,Participate,Client
 from registration.decorators import same_project_employee, is_employee, is_client, client_is_active, same_project_participant
 from .forms import ProjectForm, ProjectFormUpdate, UserForm, ParticipateRoleUpdateForm,ProjectReportFormUpdate
-
-from django.http import Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.authtoken.models import Token
+from.constants import ROLES
 
 # BASIC TEMPLATES.
 
@@ -92,7 +76,7 @@ def InscribeClient(request,pk):
 @is_client
 def MyClientProjects(request):
     now = datetime.datetime.now().strftime('%Y-%m-%d')
-    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).filter(idProject__finDate__lt=now).order_by('-enrollmentDate')
+    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).order_by('-enrollmentDate')
     return render(request,'nucleo/Myproject_list.html',{'object_list':participates})
 
 # PROYECTOS FINALIZADOS DE EMPLEADO
@@ -100,19 +84,26 @@ def MyClientProjects(request):
 @is_employee
 def MyEmployeeProjects(request):
     now = datetime.datetime.now().strftime('%Y-%m-%d')
-    project = Project.objects.filter(finDate__lt=now).filter(idEmployee__idUser__id=request.user.id).order_by('finDate')
+    project = Project.objects.filter(is_finalized=True).filter(idEmployee__idUser__id=request.user.id).order_by('finDate')
     return render(request,'nucleo/Myproject_list.html',{'object_list':project})
 
 # CRUD PROJECTS
 def AllProjectList(request):
+    now = datetime.datetime.today().date()
     if (request.method == "GET"):
-        project = Project.objects.all().order_by('-initDate')
+        if (request.user.is_staff):
+            project = Project.objects.filter(is_finalized=False).filter(idEmployee__idUser__id=request.user.id).order_by('-initDate')
+        else:
+            project = Project.objects.filter(is_finalized=False).order_by('-initDate')
         categories=Category.objects.all()
-        return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
+        return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories, 'now':now})
     else:
         idCat = request.POST.get('categorie', False)
         if (idCat == "0"):
-            project = Project.objects.all().order_by('-initDate')
+            if (request.user.is_staff):
+                project = Project.objects.filter(is_finalized=False).filter(idEmployee__idUser__id=request.user.id).order_by('-initDate')
+            else:
+                project = Project.objects.all().order_by('-initDate')
             categories=Category.objects.all()
             return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
         elif (idCat == "-1"):
@@ -120,16 +111,19 @@ def AllProjectList(request):
                 date = datetime.datetime.today()
                 week = date.strftime("%V")
                 week = int(week) + 1
-                project = Project.objects.filter(initDate__week = week).order_by('-initDate')
+                project = Project.objects.filter(is_finalized=False).filter(initDate__week = week).order_by('-initDate')
                 categories=Category.objects.all()
                 return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
             else:
                 messages.add_message(request, messages.ERROR, 'Acción no permitida.')
-                project = Project.objects.all().order_by('-initDate')
+                project = Project.objects.filter(is_finalized=False).filter(idEmployee__idUser__id=request.user.id).order_by('-initDate')
                 categories=Category.objects.all()
                 return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
         else:
-            project = Project.objects.filter(idCategory__id = idCat).order_by('-initDate')
+            if (request.user.is_staff):
+                project = Project.objects.filter(is_finalized=False).filter(idCategory__id = idCat).filter(idEmployee__idUser__id=request.user.id).order_by('-initDate')
+            else:
+                project = Project.objects.filter(idCategory__id = idCat).order_by('-initDate')
             categories=Category.objects.all()
             return render(request,'nucleo/project_list.html',{'object_list':project,'categories':categories})
 
@@ -188,6 +182,8 @@ class ProjectReportUpdate(UpdateView):
         if form.is_valid():
             project = Project.objects.filter(pk = pk).first()
             project.finDate= datetime.datetime.now().strftime('%Y-%m-%d')
+            project.is_finalized=True
+            project.report = form.cleaned_data['report']
             project.save()
             return HttpResponseRedirect(self.get_success_url())
         else:
@@ -197,8 +193,18 @@ class ProjectReportUpdate(UpdateView):
 @same_project_employee
 def projectClients(request, pk):
     project = Project.objects.filter(pk = pk).first()
-    participates = Participate.objects.all().filter(idProject = project)
-    return render(request,'nucleo/project_clients.html',{'object_list':participates, 'project':project})
+    if (request.method == "GET"):
+        participates = Participate.objects.all().filter(idProject = project)
+        return render(request,'nucleo/project_clients.html',{'object_list':participates, 'project':project, 'roles': ROLES})
+    else:
+        role = request.POST.get('role', False)
+        if (role == "0"):
+            participates = Participate.objects.all().filter(idProject = project)
+            return render(request,'nucleo/project_clients.html',{'object_list':participates, 'project':project, 'roles': ROLES})
+        else:
+            participates = Participate.objects.filter(idProject = project).filter(role=role)
+            return render(request,'nucleo/project_clients.html',{'object_list':participates, 'project':project, 'roles': ROLES})
+        
 
 @method_decorator(same_project_participant, name='dispatch')
 class UpdateRole(UpdateView):
@@ -210,32 +216,44 @@ class UpdateRole(UpdateView):
         messages.add_message(self.request, messages.SUCCESS, 'Rol actualizado.')
         return reverse_lazy('AllProjects')  
 
+# GENERAR PDF
+
+@client_is_active
 def informe_pdf(request):
+    initDate = request.POST['fecha_ini']
+    finDate = request.POST['fecha_fin']
+    if initDate != None and initDate != '' and finDate != None and initDate != '' and initDate < finDate:
+        return gen_pdf(request, initDate, finDate)
+    else:
+        messages.add_message(request, messages.ERROR, 'Las fechas no son válidas')
+        return HttpResponseRedirect('/nucleo/clientProjects')
+
+
+def gen_pdf(request, initDate, finDate):
     buffer=BytesIO()
     pdf = canvas.Canvas(buffer,pagesize=letter,bottomup=0)
     textob=pdf.beginText()
     textob.setTextOrigin(inch,inch)
     textob.setFont("Helvetica",14)
     
-    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).order_by('-enrollmentDate')
+    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).filter(idProject__finDate__gt = initDate).filter(idProject__finDate__lt = finDate).order_by('-enrollmentDate')
     
     lines=[]
     
     for participate in participates:
-        print(participate.idProject.description)
         lines.append(participate)
     
     for participate in participates:
-        textob.textLine("____________________________________")
-        textob.textLine("")
-        textob.textLine("PROYECTO: " + participate.idProject.title)
+        textob.textLine("Proyecto: " + participate.idProject.title)
         textob.textLine("- Descripcion: " + participate.idProject.description)
         textob.textLine("- Nivel: " + str(participate.idProject.level))
         textob.textLine("- Fecha de Inicio: " + str(participate.idProject.initDate))
         textob.textLine("- Fecha final: " + str(participate.idProject.finDate))
         textob.textLine("- Categoria: " + participate.idProject.idCategory.name)
-        textob.textLine("- Reporte: " + participate.idProject.report)
-        textob.textLine("____________________________________")
+        if not participate.idProject.report == None:
+            textob.textLine("- Reporte: " + participate.idProject.report)
+        else:
+            textob.textLine("- Reporte: N/D")
         textob.textLine("")
             
     pdf.drawText(textob)
@@ -244,31 +262,3 @@ def informe_pdf(request):
     buffer.seek(0)
     
     return FileResponse(buffer, as_attachment=True,filename='informe.pdf')
-
-
-class LoginView(APIView):
-    def get(self,request,format=None):
-        return Response({'detail':"GET Response"})
-    
-    def post(self,request,format=None):
-        try:
-            data = request.data
-        except ParseError as error:
-            return Response(
-                'Invalidad JSON - {0}'.format(error.detail),
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        if "user" not in data or "password" not in data:
-            return Response(
-                'Wrong credentials',
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        user=User.objects.get(username=data["user"])
-        if not user:
-            return Response(
-                'No default user, please create one',
-                status=status.HTTP_404_NOT_FOUND
-            )
-        token = Token.objects.get_or_create(user=user)
-        return Response({'detail':'POST answer','token':token[0].key})
-    
