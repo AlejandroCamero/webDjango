@@ -37,4 +37,8 @@ urlpatterns = [
     path('inscribe/<int:pk>',views.InscribeClient,name="inscribe"),
     
     path('informe_pdf',views.informe_pdf,name="informe_pdf"),
+    
+    path('api/token/',views.LoginView.as_view()),
+    
+    
 ]

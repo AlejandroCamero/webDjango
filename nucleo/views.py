@@ -1,6 +1,7 @@
 import datetime
 from http.client import HTTPResponse
 from io import BytesIO
+from lib2to3.pgen2.parse import ParseError
 from pyexpat import model
 from urllib import response
 from django.http import HttpResponseRedirect
@@ -14,6 +15,7 @@ from django.utils.decorators import method_decorator
 from datetime import date
 import calendar
 
+from .models import User
 
 from reportlab.pdfgen import canvas
 from django.http import FileResponse
@@ -28,6 +30,12 @@ from django.conf import settings
 from .models import Category, Employee, Project,Participate,Client
 from registration.decorators import same_project_employee, is_employee, is_client, client_is_active, same_project_participant
 from .forms import ProjectForm, ProjectFormUpdate, UserForm, ParticipateRoleUpdateForm,ProjectReportFormUpdate
+
+from django.http import Http404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.authtoken.models import Token
 
 # BASIC TEMPLATES.
 
@@ -218,13 +226,16 @@ def informe_pdf(request):
         lines.append(participate)
     
     for participate in participates:
-        textob.textLine("Proyecto: " + participate.idProject.title)
+        textob.textLine("____________________________________")
+        textob.textLine("")
+        textob.textLine("PROYECTO: " + participate.idProject.title)
         textob.textLine("- Descripcion: " + participate.idProject.description)
         textob.textLine("- Nivel: " + str(participate.idProject.level))
         textob.textLine("- Fecha de Inicio: " + str(participate.idProject.initDate))
         textob.textLine("- Fecha final: " + str(participate.idProject.finDate))
         textob.textLine("- Categoria: " + participate.idProject.idCategory.name)
         textob.textLine("- Reporte: " + participate.idProject.report)
+        textob.textLine("____________________________________")
         textob.textLine("")
             
     pdf.drawText(textob)
@@ -233,3 +244,31 @@ def informe_pdf(request):
     buffer.seek(0)
     
     return FileResponse(buffer, as_attachment=True,filename='informe.pdf')
+
+
+class LoginView(APIView):
+    def get(self,request,format=None):
+        return Response({'detail':"GET Response"})
+    
+    def post(self,request,format=None):
+        try:
+            data = request.data
+        except ParseError as error:
+            return Response(
+                'Invalidad JSON - {0}'.format(error.detail),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if "user" not in data or "password" not in data:
+            return Response(
+                'Wrong credentials',
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        user=User.objects.get(username=data["user"])
+        if not user:
+            return Response(
+                'No default user, please create one',
+                status=status.HTTP_404_NOT_FOUND
+            )
+        token = Token.objects.get_or_create(user=user)
+        return Response({'detail':'POST answer','token':token[0].key})
+    
