@@ -1,5 +1,8 @@
 import datetime
+from http import client
 from io import BytesIO
+from msilib import Table
+from tkinter.ttk import Style
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,login
 from django.contrib import messages
@@ -8,10 +11,18 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView,DeleteView,UpdateView
 from django.utils.decorators import method_decorator
 
+from django.views import View
+
 from reportlab.pdfgen import canvas
 from django.http import FileResponse
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.units import inch
+from reportlab.lib.units import inch, cm
+from reportlab.platypus import Paragraph
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+
+from .models import Client
 
 
 from django.urls.base import reverse_lazy
@@ -218,47 +229,105 @@ class UpdateRole(UpdateView):
 
 # GENERAR PDF
 
+
+
+
+class PDFGenerator(View):
+    
+    global style
+    style = getSampleStyleSheet()['Normal']
+    
+    def header(self,cliente_pdf):
+        logo = settings.MEDIA_ROOT('logo.png')
+        cliente_pdf.drawImage(logo,10,770,40,70, preserveAspectRatio=True)
+        
+        cliente_pdf.setFont('Helvetica-Bold',25)
+        cliente_pdf.setFillColorRGB(0,0,0)
+        cliente_pdf.drawString(150,795, u"INFORME PDF SALESIANOS")
+        
+        cliente_pdf.setFont('Times-Roman',17)
+        cliente_pdf.setFillColorRGB(0,0,0)
+        cliente_pdf.drawString(10,726, u"DATOS DE CLIENTE")
+        
+        cliente_pdf.setFont('Times-Roman',17)
+        cliente_pdf.setFillColorRGB(0,0,0)
+        cliente_pdf.drawString(10,450,u"PROYECTOS DONDE PARTICIPA EL CLIENTE")
+        
+    def table_datos_cliente(self,cliente_pdf,posicion_y,cliente_id):
+        encabezado = {'Dni','Nombre','Apellidos','Direccion'}
+        datos = [(c.dni,c.nombre,c.apellidos,c.direccion) for c in cliente_id]
+        datos_orden = Table([encabezado]+ datos, colWidth=[4*cm,4*cm,4*cm])
+        datos_orden.setStyle(TableStyle(
+            [
+                ('ALIGN',(0,0),(3,4),'CENTER'),
+                ('GRID',(0,0),(-1,-1),colors.transparent),
+                ('FONTSIZE',(0,0),(-1,-1),10),
+                ('BACKGROUND',(0,0),(-1,-1),colors.Color(red=(250/255),green=(128/255),blue=(114/255),alpha=(125/255))),
+                ('COLBACKGROUNDS',(0,1),(-1,-1),(colors.beige.colors.lightyellow)),
+            ]
+        ))
+        
+        datos_orden.wrapOn(cliente_pdf,800,600)
+        datos_orden.drawOn(cliente_pdf,10,posicion_y)
+        return datos_orden
+    
+    def Para(self,txt):
+        return Paragraph(txt,style)
+        
+    
+    def table_datos_proyecto(self,cliente_pdf,posicion_y,usuario_cliente):
+        encabezado = {'Titulo','Descripcion','Inicio','Fin'}
+        datos = [(self.Para(p.idProyecto.titulo), self.Para(p.idProyecto.descripcion), self.Para(p.idProyecto.initDate).strftime("%m/%d/%Y"), self.Para(p.idProyecto.finDate).strftime("%m/%d/%Y")) for p in usuario_cliente if p.idCliente.idUsuario.username == usuario_cliente]
+        
+        
+        
+        datos_pry = Table([encabezado]+ datos, colWidth=[4*cm,4*cm,4*cm],splitByRow=True)
+        datos_pry.setStyle(TableStyle(
+            [
+                ('ALIGN',(0,0),(3,10),'CENTER'),
+                ('GRID',(0,0),(4,0),1, colors.transparent),
+                ('FONTSIZE',(0,0),(-1,-1),10),
+                ('BACKGROUND',(0,0),(-1,-1),colors.Color(red=(250/255),green=(128/255),blue=(114/255),alpha=(125/255))),
+                ('COLBACKGROUNDS',(0,1),(-1,-1),(colors.beige.colors.lightyellow)),
+            ]
+        ))
+        
+        datos_pry.wrapOn(cliente_pdf,800,600)
+        datos_pry.drawOn(cliente_pdf,10,posicion_y)
+        return datos_pry
+    
+    def gen_pdf(self, request,cliente_id, initDate, finDate):
+        response = client.HTTPResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="informe_cliente.pdf"'
+        
+        buffer = BytesIO()
+        cliente_pdf=canvas.Canvas(buffer,pagesize=A4)
+        
+        self.header(cliente_pdf)
+        id_cliente = Client.objects.filter(id=cliente_id)
+        posicion_cliente_y=680
+        self.table_datos_cliente(cliente_pdf,posicion_cliente_y,id_cliente)
+        
+        posicion_proyectos_y=323
+        self.table_datos_proyecto(cliente_pdf,posicion_proyectos_y,request.user.username)
+        
+        cliente_pdf.showPage()
+        cliente_pdf.save()
+        
+        cliente_pdf = buffer.getValue()
+        buffer.close()
+        response.write(cliente_pdf)
+        
+        return response
+        
+        # participates = Participate.objects.filter(idClient__idUser__id=request.user.id).filter(idProject__finDate__gt = initDate).filter(idProject__finDate__lt = finDate).order_by('-enrollmentDate')
+        
 @client_is_active
-def informe_pdf(request):
+def informe_pdf(self,request):
     initDate = request.POST['fecha_ini']
     finDate = request.POST['fecha_fin']
     if initDate != None and initDate != '' and finDate != None and initDate != '' and initDate < finDate:
-        return gen_pdf(request, initDate, finDate)
+        return PDFGenerator.gen_pdf(self,request,request.user.id, initDate, finDate)
     else:
         messages.add_message(request, messages.ERROR, 'Las fechas no son válidas')
         return HttpResponseRedirect('/nucleo/clientProjects')
-
-
-def gen_pdf(request, initDate, finDate):
-    buffer=BytesIO()
-    pdf = canvas.Canvas(buffer,pagesize=letter,bottomup=0)
-    textob=pdf.beginText()
-    textob.setTextOrigin(inch,inch)
-    textob.setFont("Helvetica",14)
-    
-    participates = Participate.objects.filter(idClient__idUser__id=request.user.id).filter(idProject__finDate__gt = initDate).filter(idProject__finDate__lt = finDate).order_by('-enrollmentDate')
-    
-    lines=[]
-    
-    for participate in participates:
-        lines.append(participate)
-    
-    for participate in participates:
-        textob.textLine("Proyecto: " + participate.idProject.title)
-        textob.textLine("- Descripcion: " + participate.idProject.description)
-        textob.textLine("- Nivel: " + str(participate.idProject.level))
-        textob.textLine("- Fecha de Inicio: " + str(participate.idProject.initDate))
-        textob.textLine("- Fecha final: " + str(participate.idProject.finDate))
-        textob.textLine("- Categoria: " + participate.idProject.idCategory.name)
-        if not participate.idProject.report == None:
-            textob.textLine("- Reporte: " + participate.idProject.report)
-        else:
-            textob.textLine("- Reporte: N/D")
-        textob.textLine("")
-            
-    pdf.drawText(textob)
-    pdf.showPage()
-    pdf.save()
-    buffer.seek(0)
-    
-    return FileResponse(buffer, as_attachment=True,filename='informe.pdf')
