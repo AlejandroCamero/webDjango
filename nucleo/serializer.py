@@ -1,8 +1,8 @@
 from dataclasses import fields
 from rest_framework import serializers
-from .models import Employee
+from .models import Participate
 
-class EmployeeSerializers(serializers.ModelSerializer):
+class ParticipateSerializers(serializers.ModelSerializer):
     class Meta:
-        model = Employee
-        fields = ['dni','name','surname']
+        model = Participate
+        fields = ['idClient','idProject','enrollmentDate','role']

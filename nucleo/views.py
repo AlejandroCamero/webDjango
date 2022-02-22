@@ -1,7 +1,9 @@
 import datetime
 from http import client
 from io import BytesIO
+from lib2to3.pgen2.parse import ParseError
 from msilib import Table
+from tkinter.messagebox import RETRYCANCEL
 from tkinter.ttk import Style
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate,login
@@ -22,7 +24,16 @@ from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
 
-from .models import Client
+from .serializer import ParticipateSerializers
+
+from .models import Client, User
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+from rest_framework.authtoken.models import Token
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 
 from django.urls.base import reverse_lazy
@@ -88,6 +99,7 @@ def InscribeClient(request,pk):
 def MyClientProjects(request):
     now = datetime.datetime.now().strftime('%Y-%m-%d')
     participates = Participate.objects.filter(idClient__idUser__id=request.user.id).order_by('-enrollmentDate')
+    print(request.user.id)
     return render(request,'nucleo/Myproject_list.html',{'object_list':participates})
 
 # PROYECTOS FINALIZADOS DE EMPLEADO
@@ -331,3 +343,43 @@ def informe_pdf(self,request):
     else:
         messages.add_message(request, messages.ERROR, 'Las fechas no son válidas')
         return HttpResponseRedirect('/nucleo/clientProjects')
+    
+class Project_APIView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self,request,pk,format=None,*args, **kwargs):
+        now = datetime.datetime.now()-datetime.timedelta(days=1)
+        x = datetime.datetime(1000,1,1)
+        print(now)
+        participates = Participate.objects.filter(idClient__idUser__id=pk).filter(idProject__finDate__range=[x,now]).order_by('-enrollmentDate')
+        serializer = ParticipateSerializers(participates,many=True)
+        return Response(serializer.data)
+    
+class LoginView(APIView):
+    def get(self,request,format=None):
+        return Response({'detail':"GET Response"})
+    
+    def post(self,request,format=None):
+        try:
+            data=request.data
+        except ParseError as error:
+            return Response(
+                'Invalid JSON - {0}'.format(error.detail),
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if "user" not in data or "password" not in data:
+            return Response(
+                'Wrong credentials',
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        
+        user = User.objects.get(username=data["user"])
+        if not user:
+            return Response(
+                'No default user, please create one',
+                status=status.HTTP_404_NOT_FOUND
+            )
+            
+        token = Token.objects.get_or_create(user=user)
+        return Response({'detail':'POST answer','token':token[0].key})
+            
