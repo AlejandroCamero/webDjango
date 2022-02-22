@@ -32,7 +32,6 @@ Mis proyectos
                         <button type="submit" name=""class="btn btn-info mt-4">Generar Informe PDF</button>
                     </fieldset>
                 </form>
-                <small>NOTA: En el informe sólo aparecen los proyectos finalizados, es decir aquellos marcados con color verde.</small>
             </div>
             {% endif %}
             
@@ -55,11 +54,7 @@ Mis proyectos
                     {% for p in object_list %}
                     <tr>
                         {% if not request.user.is_staff %}
-                            {% if p.idProject.is_finalized %}
-                            <th scope="row" style="background-color:#198754; color:white">{{ p.idProject.title }}</th>
-                            {% else %}
-                            <th scope="row">{{ p.idProject.title }}</th>
-                            {% endif %}
+                        <th scope="row">{{ p.idProject.title }}</th>
                         <td>{{ p.idProject.description }}</td>
                         <td>{{ p.idProject.level }}</td>
                         <td>{{ p.idProject.initDate }}</td>
