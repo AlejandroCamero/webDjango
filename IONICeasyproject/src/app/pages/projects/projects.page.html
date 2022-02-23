@@ -1,0 +1,30 @@
+<ion-header class='ion-no-border header'>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="login" text=""></ion-back-button>
+    </ion-buttons>
+    <span class="header-logo" slot="end">EasyProject</span>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngFor="let p of projects" class="project-card">
+    <ion-card-header class="project-card-header">
+      <ion-card-title class="project-card-header">
+        {{ p.title }}
+        <ion-icon *ngIf="p.is_finalized" icon="checkmark-circle" class="icon-check"></ion-icon>
+      </ion-card-title>
+      <ion-card-subtitle class="project-card-header">
+        {{p.description}}
+      </ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list class="project-card-list">
+        <p><span class="project-card-item-name">Nivel:</span> {{p.level}}</p>
+        <p><span class="project-card-item-name">Fecha de inicio:</span> {{p.initDate}}</p>
+        <p><span class="project-card-item-name">Fecha de fin:</span> {{p.finDate}}</p>
+        <p><span class="project-card-item-name">Informe:</span> {{p.report}}</p>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

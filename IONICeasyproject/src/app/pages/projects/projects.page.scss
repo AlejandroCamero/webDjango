@@ -1,0 +1,43 @@
+ion-content{
+  --ion-background-color:#212529 !important;
+}
+
+ion-toolbar{
+  --ion-background-color: transparent;
+  --opacity: 0;
+}
+
+ion-back-button{
+    color: #212529;
+}
+
+.header-logo{
+    margin-right: 5%;
+    color: #212529;
+    font-size: 24px;
+}
+
+.project-card{
+    background-color: #fff !important;
+}
+.project-card-header{
+    background-color: rgb(137, 245, 212) !important;
+}
+.project-card-title{
+    font-size: 1.5em;
+}
+.project-card-subtitle{
+    font-size: 1em;
+    text-transform: none;
+}
+
+.icon-check{
+    color: #2dd36f;
+}
+.project-card-list{
+    background-color: #fff !important;
+    margin-top: 5%;
+}
+.project-card-item-name{
+    font-weight: bold !important;
+}

@@ -1,0 +1,109 @@
+ion-content{
+  --ion-background-color:#212529 !important;
+}
+
+ion-header{
+  position: absolute;
+}
+
+ion-toolbar{
+  --ion-background-color: transparent;
+  --opacity: 0;
+}
+
+ion-back-button{
+    color: #fff;
+}
+
+.header-logo{
+    margin-right: 5%;
+    color: #fff;
+    font-size: 24px;
+}
+
+.content-card{
+    align-self: center;
+    margin-top: 50%;
+}
+
+.form-header{
+    text-transform: uppercase;
+    font-size: 1.75em;
+    text-align: center;
+    color: #fff;
+}
+
+.form-title{
+    display: none !important;
+}
+
+.wrapform{
+  margin-top: 30px;
+}
+
+.icon-form{
+    color: #fff;
+}
+
+.itemform{
+  max-width: 70% !important;
+  margin-bottom: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  color: white !important;
+}
+
+.inputform{
+  margin-left: 20px;
+}
+.inputform::placeholder{
+    color: white !important;
+}
+
+ion-item{
+  color: #74787E;
+  --border-color: #D4D7DB;
+  --highlight-color-focused: #647B9D;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  font-size: 16px;
+}
+
+.login-btn-wrap{
+  text-align: center;
+  padding-top: 20px;
+  login-btn{
+    --ion-primary-color: #215AB7;
+    color: #F4F6FA;
+  }
+}
+
+ion-card{
+  --ion-background-color: transparent;
+  box-shadow: none !important;
+}
+
+ion-card-title{
+  margin-top: 30px;
+  font-size: 20px;
+  color: #080808;
+  text-align: center;
+  font-weight: 600;
+}
+
+ion-card-subtitle{
+  padding-top: 15px;
+  font-size: 11px;
+  color: #898585;
+  text-align: center;
+  font-weight: 300;
+}
+
+.login-btn{
+  --ion-color-primary: #215AB7;
+  text-transform: uppercase;
+}
+
+
+
+

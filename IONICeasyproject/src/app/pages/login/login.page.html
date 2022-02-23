@@ -1,0 +1,56 @@
+<ion-header class='ion-no-border header'>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="login" text=""></ion-back-button>
+    </ion-buttons>
+    <span class="header-logo" slot="end">EasyProject</span>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="content">
+  <ion-card class="ion-no-margin content-card">
+    <ion-card-header class="form-header">
+      login
+    </ion-card-header>
+    <ion-card-content>
+      <div class="wrapform">
+        <form [formGroup] = "formularioLogin">
+          <legend class="form-title">login</legend>
+          <ion-item class="itemform" rounded-corners>
+            <ion-icon name="mail-outline" class="icon-form"></ion-icon>
+            <ion-input class="inputform"
+                       formControlName = "user"
+                       type="text"
+                       placeholder="Username"
+                       required>
+            </ion-input>
+          </ion-item>
+          <ion-item class="itemform" rounded-corners>
+            <ion-icon name="lock-closed-outline" class="icon-form"></ion-icon>
+            <ion-input class="inputform"
+                       formControlName = "password"
+                       type="password"
+                       placeholder="Contraseña"
+                       required>
+            </ion-input>
+          </ion-item>
+          <div class="login-btn-wrap">
+            <ion-row>
+              <ion-col text-center>
+                <ion-button (click)="login()"
+                            type="submit"
+                            color="primary"
+                            shape="round"
+                            fill="solid"
+                            class="login-btn">
+                  login
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </div>
+        </form>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+</ion-content>
