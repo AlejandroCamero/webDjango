@@ -3,7 +3,6 @@ from io import BytesIO
 from lib2to3.pgen2.parse import ParseError
 from msilib import Table
 from tkinter.messagebox import RETRYCANCEL
-from tkinter.ttk import Style
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate,login
 from django.contrib import messages
@@ -15,18 +14,14 @@ from django.utils.decorators import method_decorator
 from django.views import View
 
 from reportlab.pdfgen import canvas
-from django.http import FileResponse
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.units import inch, cm
+from reportlab.lib.units import cm
 from reportlab.platypus import Paragraph
 from reportlab.lib import colors
 from reportlab.lib import pagesizes
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.platypus import Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
 
-from .serializer import ParticipateSerializers
-
-from .models import Client, User
+from .serializer import ParticipateSerializers, ProjectSerializers, ClientSerializers, UserSerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -34,14 +29,10 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from webDjango import settings
-
-from .models import Client
-
 
 from django.urls.base import reverse_lazy
 
-from .models import Category, Employee, Project,Participate,Client
+from .models import Category, Employee, Project,Participate,Client,User
 from registration.decorators import same_project_employee, is_employee, is_client, client_is_active, same_project_participant
 from .forms import ProjectForm, ProjectFormUpdate, UserForm, ParticipateRoleUpdateForm,ProjectReportFormUpdate
 from.constants import ROLES
@@ -362,12 +353,11 @@ class Project_APIView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self,request,pk,format=None,*args, **kwargs):
-        now = datetime.datetime.now()-datetime.timedelta(days=1)
-        x = datetime.datetime(1000,1,1)
-        print(now)
-        participates = Participate.objects.filter(idClient__idUser__id=pk).filter(idProject__finDate__range=[x,now]).order_by('-enrollmentDate')
-        serializer = ParticipateSerializers(participates,many=True)
-        return Response(serializer.data)
+        now = datetime.datetime.now().strftime('%Y-%m-%d')
+        client = Client.objects.get(idUser = pk)
+        projects = Project.objects.filter(participate__idClient=client.id).filter(finDate__lte=now).filter(is_finalized=1).order_by('-finDate')
+        projectSerializer = ProjectSerializers(projects,many=True)
+        return Response({'projects':projectSerializer.data})
     
 class LoginView(APIView):
     def get(self,request,format=None):
@@ -387,13 +377,32 @@ class LoginView(APIView):
                 status=status.HTTP_401_UNAUTHORIZED
             )
         
-        user = User.objects.get(username=data["user"])
+        user = authenticate(username=data["user"], password=data["password"])
         if not user:
             return Response(
-                'No default user, please create one',
+                'Credenciales incorrectas',
                 status=status.HTTP_404_NOT_FOUND
             )
-            
-        token = Token.objects.get_or_create(user=user)
-        return Response({'detail':'POST answer','token':token[0].key})
+        
+        if user.is_staff:
+            return Response(
+                'Usuario no autorizado, sólo clientes',
+                status = status.HTTP_401_UNAUTHORIZED
+            )
+        else:
+            client = Client.objects.get(idUser = user.id)
+            if not client.active:
+                return Response(
+                'Usuario no autorizado, cliente no activado',
+                status = status.HTTP_401_UNAUTHORIZED
+            )
+            else:
+                token = Token.objects.get_or_create(user=user)
+                return Response(
+                    {
+                    'user':UserSerializer(user, many=False).data,
+                    'client':ClientSerializers(client, many=False).data,
+                    'token':token[0].key
+                    },
+                    status=status.HTTP_200_OK)
             

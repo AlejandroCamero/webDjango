@@ -37,7 +37,7 @@ urlpatterns = [
     
     path('informe_pdf',views.informe_pdf,name="informe_pdf"),
     
-    path('api/token/',views.LoginView.as_view()),
+    path('api/token',views.LoginView.as_view()),
     path('api/myprojects/<int:pk>',views.Project_APIView.as_view(),name="api"),
     
     
